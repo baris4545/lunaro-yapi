@@ -12,6 +12,7 @@ import {
     Leaf,
     Mail,
     MailOpen,
+    Menu,
     MessageCircle,
     Navigation,
     Phone,
@@ -37,7 +38,7 @@ export const ICONS = {
 
   // ✅ burada da Navigation’a bağla
   navigate: Navigation,
-
+  menu: Menu,
   bed: Bed,
   sun: Sun,
   images: Images,
