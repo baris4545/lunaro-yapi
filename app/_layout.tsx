@@ -6,26 +6,6 @@ import { useEffect, useMemo } from "react";
 import { Platform, SafeAreaView, View } from "react-native";
 
 // RootLayout içinde:
-useEffect(() => {
-  if (Platform.OS !== "web") return;
-
-  const content =
-    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
-
-  // varsa güncelle
-  const existing = document.querySelector('meta[name="viewport"]');
-  if (existing) {
-    existing.setAttribute("content", content);
-    return;
-  }
-
-  // yoksa ekle
-  const meta = document.createElement("meta");
-  meta.setAttribute("name", "viewport");
-  meta.setAttribute("content", content);
-  document.head.appendChild(meta);
-}, []);
-
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -52,7 +32,25 @@ export default function RootLayout() {
       setButtonStyleAsync("light").catch(() => {});
     }
   }, []);
+useEffect(() => {
+  if (Platform.OS !== "web") return;
 
+  const content =
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
+
+  // varsa güncelle
+  const existing = document.querySelector('meta[name="viewport"]');
+  if (existing) {
+    existing.setAttribute("content", content);
+    return;
+  }
+
+  // yoksa ekle
+  const meta = document.createElement("meta");
+  meta.setAttribute("name", "viewport");
+  meta.setAttribute("content", content);
+  document.head.appendChild(meta);
+}, []);
   // ✅ SplashScreen: app mount olunca kapat
   useEffect(() => {
     SplashScreen.hideAsync().catch(() => {});
