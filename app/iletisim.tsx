@@ -1,5 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Linking,
   NativeScrollEvent,
@@ -12,6 +11,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import { AppIcon } from "../components/AppIcon";
 import { SiteHeader } from "../components/SiteHeader";
 
 const PHONE_1 = "05326152373";
@@ -51,7 +51,7 @@ export default function Iletisim() {
   const maxW = isVeryWide ? 1600 : 1120;
 
   // ✅ 2 kolon (tablet+), mobil 1 kolon, ekstra geniş ekranlarda 3 kolon
-  const cardBasis = isVeryWide ? "33%" : isTablet ? "50%" : "100%";
+  const cardBasis = isVeryWide ? "33.3333%" : isTablet ? "50%" : "100%";
 
   const responsiveStyles = useMemo(() => {
     return {
@@ -106,14 +106,14 @@ export default function Iletisim() {
         <View style={[styles.container, { maxWidth: maxW }]}>
           <View style={styles.sectionHead}>
             <View style={styles.sectionChip}>
-              <Ionicons name="chatbubble-ellipses-outline" size={14} color="rgba(229,231,235,0.72)" />
+              <AppIcon name="chat" size={14} color="rgba(229,231,235,0.72)" />
               <Text style={styles.sectionChipText}>İLETİŞİM BİLGİLERİ</Text>
             </View>
 
             <Text style={styles.sectionTitle}>Telefon & E-posta</Text>
           </View>
 
-          {/* ✅ GAP YERİNE MARGIN GRID (Android-safe) */}
+          {/* ✅ Android-safe grid (NO gap) */}
           <View style={styles.grid}>
             {/* PHONE 1 */}
             <View style={[styles.cardWrap, { flexBasis: cardBasis }]}>
@@ -122,7 +122,7 @@ export default function Iletisim() {
 
                 <View style={styles.cardHead}>
                   <View style={styles.iconWrap}>
-                    <Ionicons name="call-outline" size={18} color="rgba(229,231,235,0.90)" />
+                    <AppIcon name="call" size={18} color="rgba(229,231,235,0.90)" />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.cardK}>Telefon</Text>
@@ -132,12 +132,12 @@ export default function Iletisim() {
 
                 <View style={styles.actionsCol}>
                   <Pressable onPress={() => openTel(PHONE_1)} style={styles.primaryBtn}>
-                    <Ionicons name="call-outline" size={18} color="#0b0f14" />
+                    <AppIcon name="call" size={18} color="#0b0f14" />
                     <Text style={styles.primaryText}>Ara</Text>
                   </Pressable>
 
                   <Pressable onPress={() => openWhatsapp(PHONE_1)} style={[styles.ghostBtn, styles.mt10]}>
-                    <Ionicons name="logo-whatsapp" size={18} color="rgba(229,231,235,0.88)" />
+                    <AppIcon name="whatsapp" size={18} color="rgba(229,231,235,0.88)" />
                     <Text style={styles.ghostText}>WhatsApp</Text>
                   </Pressable>
                 </View>
@@ -151,7 +151,7 @@ export default function Iletisim() {
 
                 <View style={styles.cardHead}>
                   <View style={styles.iconWrap}>
-                    <Ionicons name="call-outline" size={18} color="rgba(229,231,235,0.90)" />
+                    <AppIcon name="call" size={18} color="rgba(229,231,235,0.90)" />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.cardK}>Telefon</Text>
@@ -161,12 +161,12 @@ export default function Iletisim() {
 
                 <View style={styles.actionsCol}>
                   <Pressable onPress={() => openTel(PHONE_2)} style={styles.primaryBtn}>
-                    <Ionicons name="call-outline" size={18} color="#0b0f14" />
+                    <AppIcon name="call" size={18} color="#0b0f14" />
                     <Text style={styles.primaryText}>Ara</Text>
                   </Pressable>
 
                   <Pressable onPress={() => openWhatsapp(PHONE_2)} style={[styles.ghostBtn, styles.mt10]}>
-                    <Ionicons name="logo-whatsapp" size={18} color="rgba(229,231,235,0.88)" />
+                    <AppIcon name="whatsapp" size={18} color="rgba(229,231,235,0.88)" />
                     <Text style={styles.ghostText}>WhatsApp</Text>
                   </Pressable>
                 </View>
@@ -180,7 +180,7 @@ export default function Iletisim() {
 
                 <View style={styles.cardHead}>
                   <View style={styles.iconWrap}>
-                    <Ionicons name="mail-outline" size={18} color="rgba(229,231,235,0.90)" />
+                    <AppIcon name="mail" size={18} color="rgba(229,231,235,0.90)" />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.cardK}>E-posta</Text>
@@ -190,7 +190,7 @@ export default function Iletisim() {
 
                 <View style={styles.actionsCol}>
                   <Pressable onPress={() => openMail(EMAIL)} style={styles.primaryBtn}>
-                    <Ionicons name="paper-plane-outline" size={18} color="#0b0f14" />
+                    <AppIcon name="send" size={18} color="#0b0f14" />
                     <Text style={styles.primaryText}>Mail Gönder</Text>
                   </Pressable>
 
@@ -203,12 +203,12 @@ export default function Iletisim() {
                       }
                       style={[styles.ghostBtn, styles.mt10]}
                     >
-                      <Ionicons name="logo-google" size={18} color="rgba(229,231,235,0.88)" />
+                      <AppIcon name="gmail" size={18} color="rgba(229,231,235,0.88)" />
                       <Text style={styles.ghostText}>Gmail Aç</Text>
                     </Pressable>
                   ) : (
                     <Pressable onPress={() => Linking.openURL(`mailto:${EMAIL}`)} style={[styles.ghostBtn, styles.mt10]}>
-                      <Ionicons name="mail-open-outline" size={18} color="rgba(229,231,235,0.88)" />
+                      <AppIcon name="mail-open" size={18} color="rgba(229,231,235,0.88)" />
                       <Text style={styles.ghostText}>Mail Uygulaması</Text>
                     </Pressable>
                   )}
@@ -218,7 +218,7 @@ export default function Iletisim() {
           </View>
 
           <View style={styles.noteCard}>
-            <Ionicons name="time-outline" size={16} color="rgba(229,231,235,0.65)" />
+            <AppIcon name="time" size={16} color="rgba(229,231,235,0.65)" />
             <Text style={styles.noteText}>Mesajlarınıza en kısa sürede dönüş sağlıyoruz.</Text>
           </View>
 
@@ -241,9 +241,7 @@ export default function Iletisim() {
             </View>
 
             <View style={styles.footerDivider} />
-            <Text style={styles.footerText}>
-              © {new Date().getFullYear()} Lunaro Yapı • Tüm hakları saklıdır.
-            </Text>
+            <Text style={styles.footerText}>© {new Date().getFullYear()} Lunaro Yapı • Tüm hakları saklıdır.</Text>
           </View>
         </View>
       </View>
@@ -338,7 +336,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     flexDirection: "row",
     flexWrap: "wrap",
-    marginHorizontal: -6, // spacer
+    marginHorizontal: -6,
   },
   cardWrap: {
     paddingHorizontal: 6,

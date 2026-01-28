@@ -1,6 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import { usePathname, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Platform,
@@ -10,8 +9,10 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import { AppIcon } from "./AppIcon"; // konum farklıysa düzelt: "../components/AppIcon"
 
-type NavItem = { href: "/" | "/projeler" | "/iletisim"; label: string; icon: any };
+type NavHref = "/" | "/projeler" | "/iletisim";
+type NavItem = { href: NavHref; label: string; icon: string };
 
 export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
   const router = useRouter();
@@ -22,23 +23,23 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
   const padX = isWide ? 48 : 16;
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [hoveredHref, setHoveredHref] = useState<NavItem["href"] | null>(null);
+  const [hoveredHref, setHoveredHref] = useState<NavHref | null>(null);
 
   const nav = useMemo<NavItem[]>(
     () => [
-      { href: "/", label: "Ana Sayfa", icon: "home-outline" },
-      { href: "/projeler", label: "Projeler", icon: "images-outline" },
-      { href: "/iletisim", label: "İletişim", icon: "call-outline" },
+      { href: "/", label: "Ana Sayfa", icon: "home" },
+      { href: "/projeler", label: "Projeler", icon: "images" },
+      { href: "/iletisim", label: "İletişim", icon: "phone" },
     ],
     []
   );
 
-  const go = (href: NavItem["href"]) => {
+  const go = (href: NavHref) => {
     setMenuOpen(false);
     router.push(href);
   };
 
-  const active = (href: NavItem["href"]) => pathname === href;
+  const active = (href: NavHref) => pathname === href;
 
   // Mobile menu animation
   const anim = useRef(new Animated.Value(0)).current;
@@ -48,7 +49,7 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
       duration: 200,
       useNativeDriver: true,
     }).start();
-  }, [menuOpen]);
+  }, [menuOpen, anim]);
 
   const menuTranslateY = anim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] });
   const menuOpacity = anim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] });
@@ -96,14 +97,12 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
                     isH && !isA && styles.navItemHover,
                   ]}
                 >
-                  <Ionicons
+                  <AppIcon
                     name={x.icon}
                     size={16}
                     color={isA ? "#e5e7eb" : "rgba(229,231,235,0.65)"}
                   />
-                  <Text style={[styles.navText, isA && styles.navTextActive]}>
-                    {x.label}
-                  </Text>
+                  <Text style={[styles.navText, isA && styles.navTextActive]}>{x.label}</Text>
                 </Pressable>
               );
             })}
@@ -113,11 +112,7 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
             onPress={() => setMenuOpen((s) => !s)}
             style={[styles.menuBtn, menuOpen && styles.menuBtnActive]}
           >
-            <Ionicons
-              name={menuOpen ? "close-outline" : "menu-outline"}
-              size={22}
-              color="#e5e7eb"
-            />
+            <AppIcon name={menuOpen ? "x" : "menu"} size={22} color="#e5e7eb" />
           </Pressable>
         )}
       </View>
@@ -127,7 +122,11 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
         <Animated.View
           style={[
             styles.mobileMenu,
-            { paddingHorizontal: padX, opacity: menuOpacity, transform: [{ translateY: menuTranslateY }] },
+            {
+              paddingHorizontal: padX,
+              opacity: menuOpacity,
+              transform: [{ translateY: menuTranslateY }],
+            },
           ]}
         >
           {nav.map((x) => {
@@ -138,7 +137,7 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
                 onPress={() => go(x.href)}
                 style={[styles.mobileItem, isA && styles.mobileItemActive]}
               >
-                <Ionicons name={x.icon} size={18} color="#e5e7eb" />
+                <AppIcon name={x.icon} size={18} color="#e5e7eb" />
                 <Text style={styles.mobileText}>{x.label}</Text>
               </Pressable>
             );
@@ -173,17 +172,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  brandBtn: { flexDirection: "row", alignItems: "center", gap: 10 },
+  /* ✅ gap kaldırıldı (Android safe) */
+  brandBtn: { flexDirection: "row", alignItems: "center" },
   brandMark: {
     width: 12,
     height: 12,
     borderRadius: 6,
     backgroundColor: "#e5e7eb",
+    marginRight: 10,
   },
   brand: { color: "#e5e7eb", fontWeight: "900", letterSpacing: 3 },
   brandSub: { color: "rgba(229,231,235,0.55)" },
 
-  navRow: { flexDirection: "row", gap: 10 },
+  /* ✅ gap kaldırıldı */
+  navRow: { flexDirection: "row" },
   navItem: {
     paddingVertical: 10,
     paddingHorizontal: 14,
@@ -193,12 +195,12 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.08)",
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    marginLeft: 10, // ✅ spacing
   },
   navItemHover: { backgroundColor: "rgba(255,255,255,0.06)" },
   navItemActive: { backgroundColor: "rgba(255,255,255,0.10)" },
 
-  navText: { color: "rgba(229,231,235,0.70)", fontWeight: "900" },
+  navText: { color: "rgba(229,231,235,0.70)", fontWeight: "900", marginLeft: 8 },
   navTextActive: { color: "#e5e7eb" },
 
   menuBtn: {
@@ -217,12 +219,13 @@ const styles = StyleSheet.create({
     paddingBottom: 14,
     backgroundColor: "rgba(11,15,20,0.92)",
   },
+
+  /* ✅ gap kaldırıldı */
   mobileItem: {
     paddingVertical: 14,
     flexDirection: "row",
-    gap: 12,
     alignItems: "center",
   },
   mobileItemActive: {},
-  mobileText: { color: "#e5e7eb", fontWeight: "900" },
+  mobileText: { color: "#e5e7eb", fontWeight: "900", marginLeft: 12 },
 });

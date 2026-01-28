@@ -1,10 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useFonts } from "expo-font";
 import { setBackgroundColorAsync, setButtonStyleAsync } from "expo-navigation-bar";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Platform, SafeAreaView, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
@@ -26,11 +24,6 @@ export default function RootLayout() {
     []
   );
 
-  // ✅ ICON FIX: Ionicons font preload (web + android dahil)
-  const [fontsLoaded] = useFonts({
-    ...Ionicons.font,
-  });
-
   // ✅ Android navigation bar rengi
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -39,38 +32,10 @@ export default function RootLayout() {
     }
   }, []);
 
-  // Inject fonts.css and preload fonts on web so the browser uses our copied fonts under /fonts
+  // ✅ SplashScreen: app mount olunca kapat
   useEffect(() => {
-    if (Platform.OS !== "web") return;
-    try {
-      if (!document.querySelector('link[data-lunaro-fonts]')) {
-        const css = document.createElement('link');
-        css.rel = 'stylesheet';
-        css.href = '/fonts.css';
-        css.setAttribute('data-lunaro-fonts', '1');
-        document.head.appendChild(css);
-      }
-      if (!document.querySelector('link[data-lunaro-preload-ion]')) {
-        const p = document.createElement('link');
-        p.rel = 'preload';
-        p.as = 'font';
-        p.type = 'font/ttf';
-        p.href = '/fonts/Ionicons.ttf';
-        p.crossOrigin = 'anonymous';
-        p.setAttribute('data-lunaro-preload-ion', '1');
-        document.head.appendChild(p);
-      }
-    } catch (e) {}
+    SplashScreen.hideAsync().catch(() => {});
   }, []);
-
-  // ✅ Splash hide only after fonts loaded
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync().catch(() => {});
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) return null;
 
   return (
     <QueryClientProvider client={queryClient}>

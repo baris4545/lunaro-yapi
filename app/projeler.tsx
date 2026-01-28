@@ -1,5 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   FlatList,
   Image,
@@ -16,6 +15,7 @@ import {
   ViewToken,
   useWindowDimensions,
 } from "react-native";
+import { AppIcon } from "../components/AppIcon";
 import { SiteHeader } from "../components/SiteHeader";
 import { EVRENOS_DIS, EVRENOS_IC } from "../data/evrenosPhotos";
 
@@ -94,7 +94,7 @@ export default function Projeler() {
       featureItemWidth: isVeryWide ? "20%" : isWide ? "25%" : isTablet ? "33%" : "50%",
       mapPreviewHeight: isVeryWide ? 420 : isWide ? 320 : 220,
     } as const;
-  }, [isWide, isTablet]);
+  }, [isWide, isTablet, isVeryWide]);
 
   // Lightbox
   const [open, setOpen] = useState(false);
@@ -128,11 +128,9 @@ export default function Projeler() {
   const sliderHeight = Math.max(320, height - topBarHeight);
 
   // Konum
-  const ADDRESS =
-    "Manisa / Yunusemre / Muradiye Mahallesi, Evrenos Sk. No: 44-50";
+  const ADDRESS = "Manisa / Yunusemre / Muradiye Mahallesi, Evrenos Sk. No: 44-50";
   const MAP_URL =
-    "https://www.google.com/maps/search/?api=1&query=" +
-    encodeURIComponent(ADDRESS);
+    "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(ADDRESS);
   const COORD = { latitude: 38.6655, longitude: 27.2773 };
 
   // columnWrapperStyle only when columns > 1
@@ -146,14 +144,14 @@ export default function Projeler() {
 
   const stats = useMemo(
     () => [
-      { k: "Plan", v: "3+1", icon: "grid-outline" as const },
-      { k: "Net Alan", v: "120 m²", icon: "expand-outline" as const },
-      { k: "Isıtma", v: "Yerden", icon: "flame-outline" as const },
-      { k: "Klima", v: "VRF", icon: "snow-outline" as const },
-      { k: "Havuz", v: "Özel", icon: "water-outline" as const },
-      { k: "Bahçe", v: "Müstakil", icon: "leaf-outline" as const },
-      { k: "Tavan", v: "Yüksek", icon: "resize-outline" as const },
-      { k: "Akıllı Ev", v: "Altyapı", icon: "hardware-chip-outline" as const },
+      { k: "Plan", v: "3+1", icon: "grid" as const },
+      { k: "Net Alan", v: "120 m²", icon: "expand" as const },
+      { k: "Isıtma", v: "Yerden", icon: "flame" as const },
+      { k: "Klima", v: "VRF", icon: "snow" as const },
+      { k: "Havuz", v: "Özel", icon: "droplets" as const },
+      { k: "Bahçe", v: "Müstakil", icon: "leaf" as const },
+      { k: "Tavan", v: "Yüksek", icon: "move-vertical" as const },
+      { k: "Akıllı Ev", v: "Altyapı", icon: "cpu" as const },
     ],
     []
   );
@@ -182,19 +180,11 @@ export default function Projeler() {
 
                     <View style={styles.heroBadges}>
                       <View style={styles.badge}>
-                        <Ionicons
-                          name="sparkles-outline"
-                          size={14}
-                          color="rgba(229,231,235,0.80)"
-                        />
+                        <AppIcon name="sparkles" size={14} color="rgba(229,231,235,0.80)" />
                         <Text style={styles.badgeText}>Modern Mimari</Text>
                       </View>
                       <View style={styles.badge}>
-                        <Ionicons
-                          name="shield-checkmark-outline"
-                          size={14}
-                          color="rgba(229,231,235,0.80)"
-                        />
+                        <AppIcon name="shield" size={14} color="rgba(229,231,235,0.80)" />
                         <Text style={styles.badgeText}>Premium İşçilik</Text>
                       </View>
                     </View>
@@ -210,40 +200,18 @@ export default function Projeler() {
                   <View style={styles.segmentWrap}>
                     <Pressable
                       onPress={() => setTab("dis")}
-                      style={[
-                        styles.segmentBtn,
-                        tab === "dis" && styles.segmentBtnActive,
-                      ]}
+                      style={[styles.segmentBtn, tab === "dis" && styles.segmentBtnActive]}
                     >
-                      <Ionicons
-                        name="sunny-outline"
+                      <AppIcon
+                        name="sun"
                         size={16}
-                        color={
-                          tab === "dis"
-                            ? "rgba(11,15,20,0.95)"
-                            : "rgba(229,231,235,0.75)"
-                        }
+                        color={tab === "dis" ? "rgba(11,15,20,0.95)" : "rgba(229,231,235,0.75)"}
                       />
-                      <Text
-                        style={[
-                          styles.segmentText,
-                          tab === "dis" && styles.segmentTextActive,
-                        ]}
-                      >
+                      <Text style={[styles.segmentText, tab === "dis" && styles.segmentTextActive]}>
                         Dış Mekan
                       </Text>
-                      <View
-                        style={[
-                          styles.countPill,
-                          tab === "dis" && styles.countPillActive,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.countText,
-                            tab === "dis" && styles.countTextActive,
-                          ]}
-                        >
+                      <View style={[styles.countPill, tab === "dis" && styles.countPillActive]}>
+                        <Text style={[styles.countText, tab === "dis" && styles.countTextActive]}>
                           {EVRENOS_DIS.length}
                         </Text>
                       </View>
@@ -251,47 +219,23 @@ export default function Projeler() {
 
                     <Pressable
                       onPress={() => setTab("ic")}
-                      style={[
-                        styles.segmentBtn,
-                        tab === "ic" && styles.segmentBtnActive,
-                      ]}
+                      style={[styles.segmentBtn, tab === "ic" && styles.segmentBtnActive]}
                     >
-                      <Ionicons
-                        name="bed-outline"
+                      <AppIcon
+                        name="bed"
                         size={16}
-                        color={
-                          tab === "ic"
-                            ? "rgba(11,15,20,0.95)"
-                            : "rgba(229,231,235,0.75)"
-                        }
+                        color={tab === "ic" ? "rgba(11,15,20,0.95)" : "rgba(229,231,235,0.75)"}
                       />
-                      <Text
-                        style={[
-                          styles.segmentText,
-                          tab === "ic" && styles.segmentTextActive,
-                        ]}
-                      >
+                      <Text style={[styles.segmentText, tab === "ic" && styles.segmentTextActive]}>
                         İç Mekan
                       </Text>
-                      <View
-                        style={[
-                          styles.countPill,
-                          tab === "ic" && styles.countPillActive,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.countText,
-                            tab === "ic" && styles.countTextActive,
-                          ]}
-                        >
+                      <View style={[styles.countPill, tab === "ic" && styles.countPillActive]}>
+                        <Text style={[styles.countText, tab === "ic" && styles.countTextActive]}>
                           {EVRENOS_IC.length}
                         </Text>
                       </View>
                     </Pressable>
                   </View>
-
-                  
                 </View>
               </View>
             </View>
@@ -337,7 +281,7 @@ export default function Projeler() {
                 <Image source={item.src} style={styles.thumb} resizeMode="cover" />
                 <View pointerEvents="none" style={styles.thumbOverlay} />
                 <View pointerEvents="none" style={styles.thumbCorner}>
-                  <Ionicons name="expand-outline" size={16} color="rgba(229,231,235,0.92)" />
+                  <AppIcon name="expand" size={16} color="rgba(229,231,235,0.92)" />
                 </View>
               </Pressable>
             </View>
@@ -358,9 +302,7 @@ export default function Projeler() {
                     <View style={styles.rule} />
                     <View style={{ flex: 1 }}>
                       <Text style={styles.blockTitle}>Öne Çıkan Özellikler</Text>
-                      <Text style={styles.blockLead}>
-                        Projenin temel detayları (özet)
-                      </Text>
+                      <Text style={styles.blockLead}>Projenin temel detayları (özet)</Text>
                     </View>
                   </View>
 
@@ -374,7 +316,7 @@ export default function Projeler() {
                         ]}
                       >
                         <View style={styles.statIcon}>
-                          <Ionicons name={x.icon} size={18} color="rgba(229,231,235,0.90)" />
+                          <AppIcon name={x.icon} size={18} color="rgba(229,231,235,0.90)" />
                         </View>
                         <View style={{ flex: 1 }}>
                           <Text style={styles.statK}>{x.k}</Text>
@@ -403,7 +345,10 @@ export default function Projeler() {
 
                   <View style={styles.featureList}>
                     {FEATURES.map((x) => (
-                      <View key={x} style={[styles.featureItem, { width: responsiveStyles.featureItemWidth }]}>
+                      <View
+                        key={x}
+                        style={[styles.featureItem, { width: responsiveStyles.featureItemWidth }]}
+                      >
                         <View style={styles.featureDot} />
                         <Text style={styles.featureText}>{x}</Text>
                       </View>
@@ -417,15 +362,15 @@ export default function Projeler() {
                     </Text>
 
                     <Text style={styles.paragraph}>
-                      Aile yaşamı düşünülerek tasarlanan bu özel villa projesi; geniş ve ferah
-                      yaşam alanları, yüksek tavanlı planlaması ve her villaya özel bahçe ile
-                      konforlu bir yaşam sunar.
+                      Aile yaşamı düşünülerek tasarlanan bu özel villa projesi; geniş ve ferah yaşam
+                      alanları, yüksek tavanlı planlaması ve her villaya özel bahçe ile konforlu bir
+                      yaşam sunar.
                     </Text>
 
                     <Text style={styles.paragraphLast}>
                       Çocukların güvenle oynayabileceği alanlar, ailenizle keyifli zaman
-                      geçirebileceğiniz özel havuzlar ve şehrin içinde doğayla iç içe bir yaşam
-                      bir arada.
+                      geçirebileceğiniz özel havuzlar ve şehrin içinde doğayla iç içe bir yaşam bir
+                      arada.
                     </Text>
                   </View>
                 </View>
@@ -440,9 +385,7 @@ export default function Projeler() {
                     <View style={styles.rule} />
                     <View style={{ flex: 1 }}>
                       <Text style={styles.blockTitle}>Konum</Text>
-                      <Text style={styles.blockLead}>
-                        Proje adresi ve harita bağlantısı.
-                      </Text>
+                      <Text style={styles.blockLead}>Proje adresi ve harita bağlantısı.</Text>
                     </View>
                   </View>
 
@@ -455,13 +398,16 @@ export default function Projeler() {
 
                       <View style={styles.btnRow}>
                         <Pressable onPress={() => Linking.openURL(MAP_URL)} style={styles.mapBtn}>
-                          <Ionicons name="navigate-outline" size={18} color={THEME.bg} />
+                          <AppIcon name="navigation" size={18} color={THEME.bg} />
                           <Text style={styles.mapBtnText}>Google Maps’te Aç</Text>
                         </Pressable>
                       </View>
                     </View>
 
-                    <Pressable onPress={() => Linking.openURL(MAP_URL)} style={[styles.mapPreview, { height: responsiveStyles.mapPreviewHeight }]}> 
+                    <Pressable
+                      onPress={() => Linking.openURL(MAP_URL)}
+                      style={[styles.mapPreview, { height: responsiveStyles.mapPreviewHeight }]}
+                    >
                       {Platform.OS === "web" ? (
                         <WebGoogleMapEmbed COORD={COORD} />
                       ) : (
@@ -476,7 +422,7 @@ export default function Projeler() {
                       ) : null}
 
                       <View pointerEvents="none" style={styles.mapHintBar}>
-                        <Ionicons name="map-outline" size={16} color={THEME.text2} />
+                        <AppIcon name="map" size={16} color={THEME.text2} />
                         <Text style={styles.mapHintText}>Haritayı açmak için dokun</Text>
                       </View>
                     </Pressable>
@@ -518,11 +464,7 @@ export default function Projeler() {
             style={{ flex: 1 }}
             renderItem={({ item }) => (
               <View style={{ width, height: sliderHeight }}>
-                <Image
-                  source={item.src}
-                  style={{ width: "100%", height: "100%" }}
-                  resizeMode="contain"
-                />
+                <Image source={item.src} style={{ width: "100%", height: "100%" }} resizeMode="contain" />
               </View>
             )}
             getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
@@ -553,6 +495,7 @@ function WebGoogleMapEmbed({ COORD }: { COORD: { latitude: number; longitude: nu
     `https://www.google.com/maps?` +
     `q=${COORD.latitude},${COORD.longitude}` +
     `&z=16&output=embed&hl=tr`;
+
   // @ts-ignore
   return (
     // @ts-ignore
@@ -581,8 +524,6 @@ function NativeMap({
   COORD: { latitude: number; longitude: number };
   ADDRESS: string;
 }) {
-  // react-native-maps may not be available in all environments (web/dev).
-  // Load safely and provide a lightweight fallback to avoid runtime crashes.
   let Maps: any = null;
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -593,7 +534,12 @@ function NativeMap({
 
   if (!Maps) {
     return (
-      <View style={[StyleSheet.absoluteFillObject, { alignItems: "center", justifyContent: "center" }]}>
+      <View
+        style={[
+          StyleSheet.absoluteFillObject,
+          { alignItems: "center", justifyContent: "center" },
+        ]}
+      >
         <Text style={{ color: THEME.text2 }}>{ADDRESS}</Text>
       </View>
     );
@@ -621,6 +567,7 @@ function NativeMap({
     </MapView>
   );
 }
+
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: THEME.bg },
 
@@ -668,10 +615,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
 
-  heroBadges: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
+  heroBadges: { flexDirection: "row", flexWrap: "wrap" },
   badge: {
     flexDirection: "row",
     alignItems: "center",
@@ -708,11 +652,7 @@ const styles = StyleSheet.create({
   },
 
   /* Segmented tabs */
-  segmentWrap: {
-    marginTop: 14,
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
+  segmentWrap: { marginTop: 14, flexDirection: "row", flexWrap: "wrap" },
   segmentBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -725,15 +665,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 10,
   },
-  segmentBtnActive: {
-    backgroundColor: THEME.text,
-    borderColor: THEME.text,
-  },
-  segmentText: {
-    color: THEME.text2,
-    fontWeight: "900",
-    marginLeft: 6,
-  },
+  segmentBtnActive: { backgroundColor: THEME.text, borderColor: THEME.text },
+  segmentText: { color: THEME.text2, fontWeight: "900", marginLeft: 6 },
   segmentTextActive: { color: THEME.bg },
 
   countPill: {
@@ -752,7 +685,7 @@ const styles = StyleSheet.create({
   countText: { color: THEME.text2, fontWeight: "900", fontSize: 12 },
   countTextActive: { color: THEME.bg },
 
-  /* Grid helpers */
+  /* Grid */
   singleColWrap: { alignItems: "center" },
   multiColWrap: {},
 
@@ -762,7 +695,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: THEME.border2,
     backgroundColor: "rgba(255,255,255,0.02)",
-    marginBottom: 12,
     ...(Platform.OS === "web"
       ? { boxShadow: "0px 10px 22px rgba(0,0,0,0.35)" }
       : {
@@ -773,11 +705,7 @@ const styles = StyleSheet.create({
           elevation: 6,
         }),
   },
-
   thumb: { width: "100%", height: "100%" },
-  sectionHead: { marginBottom: 6 },
-  sectionTitle: { color: THEME.text, fontSize: 20, fontWeight: "900" },
-
   thumbOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(11,15,20,0.10)" },
   thumbCorner: {
     position: "absolute",
@@ -793,6 +721,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(11,15,20,0.40)",
   },
 
+  sectionHead: { marginBottom: 6 },
+  sectionTitle: { color: THEME.text, fontSize: 20, fontWeight: "900" },
+
+  /* Blocks */
   blockCard: {
     borderRadius: 24,
     borderWidth: 1,
@@ -805,6 +737,7 @@ const styles = StyleSheet.create({
   blockTitle: { color: THEME.text, fontWeight: "900", fontSize: 16 },
   blockLead: { color: THEME.text2, fontSize: 13 },
 
+  /* Stats */
   statsInner: { flexDirection: "row", flexWrap: "wrap", marginTop: 12 },
   statCard: {
     flexDirection: "row",
@@ -820,6 +753,7 @@ const styles = StyleSheet.create({
   statK: { color: THEME.text2, fontWeight: "900", fontSize: 13 },
   statV: { color: THEME.text, fontWeight: "900", fontSize: 14 },
 
+  /* Features */
   featureList: { flexDirection: "row", flexWrap: "wrap", marginTop: 12 },
   featureItem: { width: "50%", flexDirection: "row", alignItems: "flex-start", paddingVertical: 6 },
   featureDot: { width: 8, height: 8, borderRadius: 8, backgroundColor: THEME.text, marginTop: 6, marginRight: 8 },
@@ -828,27 +762,89 @@ const styles = StyleSheet.create({
   paragraph: { color: THEME.text2, marginTop: 10, fontSize: 14, lineHeight: 22 },
   paragraphLast: { color: THEME.text2, marginTop: 10, fontSize: 14, lineHeight: 22, marginBottom: 4 },
 
-  locationBody: { flexDirection: "row", gap: 12, alignItems: "flex-start" as any },
-  locationLeft: { flex: 1, marginRight: 12 },
+  /* Location (Android-safe: no gap) */
+  locationBody: { flexDirection: "row", flexWrap: "wrap" },
+  locationLeft: { flex: 1, minWidth: 260, marginRight: 12, marginBottom: 12 },
+
   addrRow: { marginBottom: 12 },
   addrK: { color: THEME.text2, fontWeight: "900", marginBottom: 4 },
   addrV: { color: THEME.text2 },
-  btnRow: { flexDirection: "row", marginTop: 8 },
-  mapBtn: { flexDirection: "row", alignItems: "center", gap: 8, borderWidth: 1, borderColor: THEME.text, backgroundColor: THEME.text, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 14, marginRight: 10 },
+
+  btnRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 8 },
+  mapBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: THEME.text,
+    backgroundColor: THEME.text,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    marginRight: 10,
+    marginBottom: 10,
+  },
   mapBtnText: { color: THEME.bg, fontWeight: "900", marginLeft: 8 },
-  mapPreview: { position: "relative", flex: 1, minWidth: 260, height: 220, borderRadius: 18, borderWidth: 1, borderColor: THEME.border2, backgroundColor: "rgba(255,255,255,0.02)", overflow: "hidden", justifyContent: "flex-end" },
-  mapHintBar: { flexDirection: "row", alignItems: "center", paddingHorizontal: 12, paddingVertical: 10, backgroundColor: "rgba(11,15,20,0.72)", borderTopWidth: 1, borderTopColor: THEME.border2 },
+
+  mapPreview: {
+    position: "relative",
+    flex: 1,
+    minWidth: 260,
+    height: 220,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: THEME.border2,
+    backgroundColor: "rgba(255,255,255,0.02)",
+    overflow: "hidden",
+    justifyContent: "flex-end",
+  },
+  mapHintBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: "rgba(11,15,20,0.72)",
+    borderTopWidth: 1,
+    borderTopColor: THEME.border2,
+  },
   mapHintText: { color: THEME.text2, fontWeight: "900", marginLeft: 8 },
 
+  /* Modal */
   modal: { flex: 1, backgroundColor: THEME.bg },
-  modalTop: { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  closeBtn: { borderWidth: 1, borderColor: "rgba(255,255,255,0.18)", backgroundColor: "transparent", paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
+  modalTop: {
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    paddingBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  closeBtn: {
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.18)",
+    backgroundColor: "transparent",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
   closeText: { color: THEME.text, fontWeight: "900" },
-  counterPill: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: 999, backgroundColor: THEME.card2, borderWidth: 1, borderColor: THEME.border2 },
+  counterPill: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    backgroundColor: THEME.card2,
+    borderWidth: 1,
+    borderColor: THEME.border2,
+  },
   counterText: { color: THEME.text, fontWeight: "900" },
 
   modalBottom: { position: "absolute", left: 0, right: 0, bottom: 24, alignItems: "center" },
-  dotsPill: { flexDirection: "row", gap: 8 },
-  dot: { width: 8, height: 8, borderRadius: 8, backgroundColor: "rgba(255,255,255,0.18)", marginHorizontal: 4 },
+  dotsPill: { flexDirection: "row" },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 8,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    marginHorizontal: 4,
+  },
   dotActive: { backgroundColor: THEME.text },
 });

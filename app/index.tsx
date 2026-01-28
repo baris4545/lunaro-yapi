@@ -1,6 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -11,6 +10,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import { AppIcon } from "../components/AppIcon";
 import { Lightbox } from "../components/Lightbox";
 import { ProjectGallery } from "../components/ProjectGallery";
 import { SiteHeader } from "../components/SiteHeader";
@@ -29,6 +29,7 @@ export default function Home() {
   const isWide = width >= 980;
   const isTablet = width >= 720;
   const isVeryWide = width >= 1600;
+
   const padX = isWide ? 48 : 16;
   const maxW = isVeryWide ? 1600 : 1120;
 
@@ -79,16 +80,12 @@ export default function Home() {
 
                 <View style={styles.heroBadges}>
                   <View style={[styles.badge, styles.mr8, styles.mb8]}>
-                    <Ionicons name="sparkles-outline" size={14} color="rgba(229,231,235,0.82)" />
+                    <AppIcon name="sparkles" size={14} color="rgba(229,231,235,0.82)" />
                     <Text style={styles.badgeText}>Modern Mimari</Text>
                   </View>
 
                   <View style={[styles.badge, styles.mb8]}>
-                    <Ionicons
-                      name="shield-checkmark-outline"
-                      size={14}
-                      color="rgba(229,231,235,0.82)"
-                    />
+                    <AppIcon name="shield" size={14} color="rgba(229,231,235,0.82)" />
                     <Text style={styles.badgeText}>Premium İşçilik</Text>
                   </View>
                 </View>
@@ -102,7 +99,7 @@ export default function Home() {
 
               <View style={styles.ctaRow}>
                 <Pressable onPress={() => router.push("/projeler")} style={styles.primaryBtn}>
-                  <Ionicons name="images-outline" size={18} color="#0b0f14" />
+                  <AppIcon name="images" size={18} color="#0b0f14" />
                   <Text style={styles.primaryText}>Projeleri İncele</Text>
                 </Pressable>
               </View>
@@ -117,7 +114,7 @@ export default function Home() {
               <View style={{ flex: 1, minWidth: 220 }}>
                 <View style={styles.sectionCapRow}>
                   <View style={styles.sectionChip}>
-                    <Ionicons name="camera-outline" size={14} color="rgba(229,231,235,0.72)" />
+                    <AppIcon name="images" size={14} color="rgba(229,231,235,0.72)" />
                     <Text style={styles.sectionChipText}>GALERİ</Text>
                   </View>
                 </View>
@@ -127,7 +124,7 @@ export default function Home() {
 
               <Pressable onPress={() => router.push("/projeler")} style={styles.linkBtn}>
                 <Text style={styles.linkText}>Tüm Galeri</Text>
-                <Ionicons name="chevron-forward" size={16} color="rgba(229,231,235,0.7)" />
+                <AppIcon name="chevron-right" size={16} color="rgba(229,231,235,0.7)" />
               </Pressable>
             </View>
           </View>
@@ -145,31 +142,38 @@ export default function Home() {
                 <View style={styles.rule} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.aboutTitle}>Lunaro Yapı</Text>
-                  <Text style={[styles.aboutLead, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}> 
+                  <Text style={[styles.aboutLead, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}>
                     Güvenilir yapılar, doğru lokasyonlar ve modern yaşam anlayışıyla geleceğe değer katan projeler.
                   </Text>
                 </View>
               </View>
 
               <View style={{ marginTop: 14 }}>
-                <Text style={[styles.aboutText, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}> 
+                <Text style={[styles.aboutText, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}>
                   Yıllara dayanan sektör tecrübesiyle konut üretimi alanında faaliyet gösteren firmamız, modern mimari
                   anlayışı ve kaliteli yapı standartlarını temel alarak projeler geliştirmektedir. Amacımız; sadece konut
                   değil, uzun yıllar güvenle yaşanabilecek, değerini koruyan yaşam alanları üretmektir.
                 </Text>
-                <Text style={[styles.aboutText, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}> 
+
+                <Text style={[styles.aboutText, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}>
                   Projelerimizde fonksiyonel planlama, kaliteli malzeme kullanımı ve güçlü teknik altyapı önceliğimizdir.
                   Yüksek tavanlı, ferah yaşam alanları; akıllı ev sistemleri, yerden ısıtma ve çağdaş mühendislik
                   çözümleriyle desteklenmektedir.
                 </Text>
 
-                <Text style={[styles.aboutText, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}> 
+                <Text style={[styles.aboutText, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}>
                   Her projede aile yaşamına uygun, konforlu ve güvenli mekânlar oluşturmayı hedeflerken; yatırım açısından
                   da sürdürülebilir ve değer kazanan yapılar inşa etmeye özen gösteriyoruz. Planlama aşamasından teslim
                   sürecine kadar şeffaf, ulaşılabilir ve çözüm odaklı bir yaklaşım benimsiyoruz.
                 </Text>
 
-                <Text style={[styles.aboutText, styles.aboutTextLast, { maxWidth: responsiveStyles.aboutTextMaxWidth }]}> 
+                <Text
+                  style={[
+                    styles.aboutText,
+                    styles.aboutTextLast,
+                    { maxWidth: responsiveStyles.aboutTextMaxWidth },
+                  ]}
+                >
                   Güvenilir yapılar, doğru lokasyonlar ve modern yaşam anlayışıyla geleceğe değer katan projeler üretmeye
                   devam ediyoruz.
                 </Text>
@@ -178,7 +182,7 @@ export default function Home() {
               <View style={styles.aboutCtaRow}>
                 <Pressable onPress={() => router.push("/iletisim")} style={styles.aboutCta}>
                   <Text style={styles.aboutCtaText}>İletişime Geç</Text>
-                  <Ionicons name="arrow-forward" size={16} color="#0b0f14" />
+                  <AppIcon name="arrow-right" size={16} color="#0b0f14" />
                 </Pressable>
               </View>
             </View>
@@ -215,7 +219,12 @@ export default function Home() {
         <View style={{ height: 26 }} />
       </ScrollView>
 
-      <Lightbox open={lbOpen} onClose={() => setLbOpen(false)} data={EVRENOS_IMAGES} initialIndex={lbIndex} />
+      <Lightbox
+        open={lbOpen}
+        onClose={() => setLbOpen(false)}
+        data={EVRENOS_IMAGES}
+        initialIndex={lbIndex}
+      />
     </>
   );
 }
@@ -263,7 +272,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.02)",
   },
 
-  /* ✅ gap kaldırıldı */
   heroTopRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -289,7 +297,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(229,231,235,0.92)",
     marginRight: 8,
   },
-  kicker: { color: "rgba(229,231,235,0.78)", fontWeight: "900", letterSpacing: 2.2, fontSize: 11 },
+  kicker: {
+    color: "rgba(229,231,235,0.78)",
+    fontWeight: "900",
+    letterSpacing: 2.2,
+    fontSize: 11,
+  },
 
   heroBadges: { flexDirection: "row", flexWrap: "wrap", alignItems: "center" },
   badge: {
@@ -302,12 +315,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.10)",
   },
-  badgeText: { marginLeft: 6, color: "rgba(229,231,235,0.80)", fontWeight: "900", fontSize: 12 },
+  badgeText: {
+    marginLeft: 6,
+    color: "rgba(229,231,235,0.80)",
+    fontWeight: "900",
+    fontSize: 12,
+  },
 
-  h1: { marginTop: 16, fontSize: 40, lineHeight: 44, letterSpacing: -0.8, fontWeight: "900", color: "#e5e7eb" },
-  lead: { marginTop: 10, color: "rgba(229,231,235,0.72)", fontSize: 15.5, lineHeight: 28, maxWidth: 860 },
+  h1: {
+    marginTop: 16,
+    fontSize: 40,
+    lineHeight: 44,
+    letterSpacing: -0.8,
+    fontWeight: "900",
+    color: "#e5e7eb",
+  },
+  lead: {
+    marginTop: 10,
+    color: "rgba(229,231,235,0.72)",
+    fontSize: 15.5,
+    lineHeight: 28,
+    maxWidth: 860,
+  },
 
-  /* ✅ gap kaldırıldı */
   ctaRow: { marginTop: 16, flexDirection: "row", flexWrap: "wrap" },
   primaryBtn: {
     flexDirection: "row",
@@ -324,10 +354,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "space-between",
-    flexWrap: "wrap", // ✅ dar ekranda alta geçsin
+    flexWrap: "wrap",
   },
-
-  /* ✅ gap kaldırıldı */
   sectionCapRow: { flexDirection: "row", alignItems: "center" },
   sectionChip: {
     flexDirection: "row",
@@ -339,18 +367,34 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.10)",
     backgroundColor: "rgba(255,255,255,0.05)",
   },
-  sectionChipText: { marginLeft: 8, color: "rgba(229,231,235,0.70)", fontWeight: "900", letterSpacing: 2.0, fontSize: 11 },
+  sectionChipText: {
+    marginLeft: 8,
+    color: "rgba(229,231,235,0.70)",
+    fontWeight: "900",
+    letterSpacing: 2.0,
+    fontSize: 11,
+  },
 
-  sectionTitle: { marginTop: 10, color: "#e5e7eb", fontWeight: "900", fontSize: 16, letterSpacing: 0.2 },
+  sectionTitle: {
+    marginTop: 10,
+    color: "#e5e7eb",
+    fontWeight: "900",
+    fontSize: 16,
+    letterSpacing: 0.2,
+  },
 
   linkBtn: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 8,
-    marginTop: 10, // ✅ dar ekranda alta geçince boşluk
+    marginTop: 10,
   },
-  linkText: { color: "rgba(229,231,235,0.72)", fontWeight: "900", marginRight: 4 },
+  linkText: {
+    color: "rgba(229,231,235,0.72)",
+    fontWeight: "900",
+    marginRight: 4,
+  },
 
   /* About */
   aboutCard: {
@@ -370,10 +414,15 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: "rgba(255,255,255,0.05)",
   },
-
-  /* ✅ gap kaldırıldı */
   aboutHead: { flexDirection: "row", alignItems: "flex-start" },
-  rule: { width: 3, height: 52, borderRadius: 99, backgroundColor: "rgba(229,231,235,0.22)", marginTop: 2, marginRight: 14 },
+  rule: {
+    width: 3,
+    height: 52,
+    borderRadius: 99,
+    backgroundColor: "rgba(229,231,235,0.22)",
+    marginTop: 2,
+    marginRight: 14,
+  },
 
   aboutTitle: { color: "#e5e7eb", fontWeight: "900", letterSpacing: 2.0, fontSize: 12 },
   aboutLead: { marginTop: 8, color: "rgba(229,231,235,0.65)", lineHeight: 22, maxWidth: 820 },
@@ -406,8 +455,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.06)",
   },
-
-  /* ✅ gap kaldırıldı */
   footerTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" },
   footerBrand: { color: "#e5e7eb", fontWeight: "900", letterSpacing: 3.2, fontSize: 12 },
   footerSub: { marginTop: 2, color: "rgba(229,231,235,0.55)", fontWeight: "900", letterSpacing: 1.2, fontSize: 11 },
@@ -419,7 +466,7 @@ const styles = StyleSheet.create({
   footerDivider: { marginTop: 12, height: 1, backgroundColor: "rgba(255,255,255,0.06)" },
   footerText: { marginTop: 10, color: "rgba(229,231,235,0.50)" },
 
-  /* small helpers */
+  /* helpers */
   mr8: { marginRight: 8 },
   mb8: { marginBottom: 8 },
 });
