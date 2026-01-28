@@ -51,6 +51,5 @@ export const EVRENOS_IC = [
     { id: "ic-23", src: require("../assets/evrenos/ic/evrenos-ic-23.jpg") },
     { id: "ic-24", src: require("../assets/evrenos/ic/evrenos-ic-24.jpg") },
     { id: "ic-25", src: require("../assets/evrenos/ic/evrenos-ic-25.jpg") },
-    
-  // ... buraya ic-7 ... ic-25 gibi devam
+  
 ];

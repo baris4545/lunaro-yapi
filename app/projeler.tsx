@@ -55,8 +55,9 @@ export default function Projeler() {
 
   const isWide = width >= 980;
   const isTablet = width >= 720;
+  const isVeryWide = width >= 1600;
   const padX = isWide ? 48 : 16;
-  const maxW = 1120;
+  const maxW = isVeryWide ? 1600 : 1120;
 
   const [elevated, setElevated] = useState(false);
 
@@ -65,6 +66,8 @@ export default function Projeler() {
 
   // Grid columns
   const numColumns = useMemo(() => {
+    if (width >= 2000) return 7;
+    if (width >= 1600) return 6;
     if (width >= 1200) return 5;
     if (width >= 980) return 4;
     if (width >= 720) return 3;
@@ -82,6 +85,16 @@ export default function Projeler() {
       : Math.floor((containerWidth - gap * (numColumns - 1)) / numColumns);
 
   const itemHeight = numColumns === 1 ? Math.round(itemWidth * 0.68) : itemWidth;
+
+  // Responsive inline styles computed from layout breakpoints
+  const responsiveStyles = useMemo(() => {
+    return {
+      h1: { fontSize: isVeryWide ? 56 : isWide ? 44 : isTablet ? 36 : 28 },
+      lead: { maxWidth: isVeryWide ? 1100 : isWide ? 860 : isTablet ? 560 : 360 },
+      featureItemWidth: isVeryWide ? "20%" : isWide ? "25%" : isTablet ? "33%" : "50%",
+      mapPreviewHeight: isVeryWide ? 420 : isWide ? 320 : 220,
+    } as const;
+  }, [isWide, isTablet]);
 
   // Lightbox
   const [open, setOpen] = useState(false);
@@ -187,8 +200,8 @@ export default function Projeler() {
                     </View>
                   </View>
 
-                  <Text style={styles.h1}>Lunaro Evrenos</Text>
-                  <Text style={styles.lead}>
+                  <Text style={[styles.h1, responsiveStyles.h1]}>Lunaro Evrenos</Text>
+                  <Text style={[styles.lead, responsiveStyles.lead]}>
                     Modern mimarisi, yüksek tavanlı ferah yaşam alanları ve her villaya özel
                     havuzuyla ayrıcalıklı bir yaşam sunar.
                   </Text>
@@ -322,8 +335,8 @@ export default function Projeler() {
                 ]}
               >
                 <Image source={item.src} style={styles.thumb} resizeMode="cover" />
-                <View style={[styles.thumbOverlay, { pointerEvents: "none" }]} />
-                <View style={[styles.thumbCorner, { pointerEvents: "none" }]}>
+                <View pointerEvents="none" style={styles.thumbOverlay} />
+                <View pointerEvents="none" style={styles.thumbCorner}>
                   <Ionicons name="expand-outline" size={16} color="rgba(229,231,235,0.92)" />
                 </View>
               </Pressable>
@@ -390,7 +403,7 @@ export default function Projeler() {
 
                   <View style={styles.featureList}>
                     {FEATURES.map((x) => (
-                      <View key={x} style={styles.featureItem}>
+                      <View key={x} style={[styles.featureItem, { width: responsiveStyles.featureItemWidth }]}>
                         <View style={styles.featureDot} />
                         <Text style={styles.featureText}>{x}</Text>
                       </View>
@@ -448,7 +461,7 @@ export default function Projeler() {
                       </View>
                     </View>
 
-                    <Pressable onPress={() => Linking.openURL(MAP_URL)} style={styles.mapPreview}>
+                    <Pressable onPress={() => Linking.openURL(MAP_URL)} style={[styles.mapPreview, { height: responsiveStyles.mapPreviewHeight }]}> 
                       {Platform.OS === "web" ? (
                         <WebGoogleMapEmbed COORD={COORD} />
                       ) : (
@@ -462,7 +475,7 @@ export default function Projeler() {
                         />
                       ) : null}
 
-                      <View style={[styles.mapHintBar, { pointerEvents: "none" }]}>
+                      <View pointerEvents="none" style={styles.mapHintBar}>
                         <Ionicons name="map-outline" size={16} color={THEME.text2} />
                         <Text style={styles.mapHintText}>Haritayı açmak için dokun</Text>
                       </View>
@@ -522,7 +535,7 @@ export default function Projeler() {
             onViewableItemsChanged={onViewableItemsChanged}
           />
 
-          <View style={[styles.modalBottom, { pointerEvents: "none" }]}>
+          <View pointerEvents="none" style={styles.modalBottom}>
             <View style={styles.dotsPill}>
               {data.map((_, i) => (
                 <View key={i} style={[styles.dot, i === activeIndex ? styles.dotActive : null]} />
@@ -568,10 +581,26 @@ function NativeMap({
   COORD: { latitude: number; longitude: number };
   ADDRESS: string;
 }) {
-  const Maps = require("react-native-maps");
-  const MapView = Maps.default;
-  const Marker = Maps.Marker;
-  const PROVIDER_GOOGLE = Maps.PROVIDER_GOOGLE;
+  // react-native-maps may not be available in all environments (web/dev).
+  // Load safely and provide a lightweight fallback to avoid runtime crashes.
+  let Maps: any = null;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    Maps = require("react-native-maps");
+  } catch (err) {
+    Maps = null;
+  }
+
+  if (!Maps) {
+    return (
+      <View style={[StyleSheet.absoluteFillObject, { alignItems: "center", justifyContent: "center" }]}>
+        <Text style={{ color: THEME.text2 }}>{ADDRESS}</Text>
+      </View>
+    );
+  }
+
+  const MapView = Maps.default ?? Maps;
+  const { Marker, PROVIDER_GOOGLE } = Maps;
 
   return (
     <MapView
@@ -592,7 +621,6 @@ function NativeMap({
     </MapView>
   );
 }
-
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: THEME.bg },
 
@@ -612,26 +640,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
     flexWrap: "wrap",
   },
 
   kickerPill: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    borderWidth: 1,
-    borderColor: THEME.pillBorder,
-    backgroundColor: THEME.pill,
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 999,
+    borderWidth: 1,
+    borderColor: THEME.pillBorder,
+    backgroundColor: THEME.pill,
+    marginBottom: 8,
   },
   kickerDot: {
     width: 8,
     height: 8,
     borderRadius: 99,
     backgroundColor: "rgba(229,231,235,0.90)",
+    marginRight: 8,
   },
   kicker: {
     color: THEME.text2,
@@ -640,19 +668,28 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
 
-  heroBadges: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
+  heroBadges: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 999,
     backgroundColor: THEME.pill,
     borderWidth: 1,
     borderColor: THEME.border2,
+    marginRight: 8,
+    marginBottom: 8,
   },
-  badgeText: { color: THEME.text2, fontWeight: "900", fontSize: 12 },
+  badgeText: {
+    color: THEME.text2,
+    fontWeight: "900",
+    fontSize: 12,
+    marginLeft: 6,
+  },
 
   h1: {
     marginTop: 14,
@@ -675,28 +712,32 @@ const styles = StyleSheet.create({
     marginTop: 14,
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
   },
   segmentBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: THEME.border2,
     backgroundColor: THEME.card2,
+    marginRight: 10,
+    marginBottom: 10,
   },
   segmentBtnActive: {
     backgroundColor: THEME.text,
     borderColor: THEME.text,
   },
-  segmentText: { color: THEME.text2, fontWeight: "900" },
+  segmentText: {
+    color: THEME.text2,
+    fontWeight: "900",
+    marginLeft: 6,
+  },
   segmentTextActive: { color: THEME.bg },
 
   countPill: {
-    marginLeft: 2,
+    marginLeft: 8,
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 999,
@@ -711,33 +752,7 @@ const styles = StyleSheet.create({
   countText: { color: THEME.text2, fontWeight: "900", fontSize: 12 },
   countTextActive: { color: THEME.bg },
 
-  hint: { marginTop: 10, color: THEME.text3, lineHeight: 20 },
-
-  /* Section head */
-  sectionHead: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    gap: 12,
-    flexWrap: "wrap",
-  },
-  sectionTitle: { color: THEME.text, fontWeight: "900", fontSize: 14, letterSpacing: 0.3 },
-  sectionSub: { marginTop: 6, color: THEME.text3 },
-
-  rightHintPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: THEME.border2,
-    backgroundColor: THEME.card2,
-  },
-  rightHintText: { color: THEME.text3, fontWeight: "900" },
-
-  /* Grid */
+  /* Grid helpers */
   singleColWrap: { alignItems: "center" },
   multiColWrap: {},
 
@@ -747,6 +762,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: THEME.border2,
     backgroundColor: "rgba(255,255,255,0.02)",
+    marginBottom: 12,
     ...(Platform.OS === "web"
       ? { boxShadow: "0px 10px 22px rgba(0,0,0,0.35)" }
       : {
@@ -757,11 +773,12 @@ const styles = StyleSheet.create({
           elevation: 6,
         }),
   },
+
   thumb: { width: "100%", height: "100%" },
-  thumbOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(11,15,20,0.10)",
-  },
+  sectionHead: { marginBottom: 6 },
+  sectionTitle: { color: THEME.text, fontSize: 20, fontWeight: "900" },
+
+  thumbOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(11,15,20,0.10)" },
   thumbCorner: {
     position: "absolute",
     right: 10,
@@ -776,7 +793,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(11,15,20,0.40)",
   },
 
-  /* Blocks */
   blockCard: {
     borderRadius: 24,
     borderWidth: 1,
@@ -784,145 +800,55 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.card,
     padding: 18,
   },
-  blockHead: { flexDirection: "row", gap: 14, alignItems: "flex-start" },
-  rule: { width: 3, height: 52, borderRadius: 99, backgroundColor: "rgba(229,231,235,0.22)", marginTop: 2 },
-  blockTitle: { color: THEME.text, fontWeight: "900", letterSpacing: 2.0, fontSize: 12 },
-  blockLead: { marginTop: 8, color: THEME.text3, lineHeight: 22, maxWidth: 820 },
+  blockHead: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
+  rule: { width: 4, height: 28, backgroundColor: THEME.text, marginRight: 12, borderRadius: 2 },
+  blockTitle: { color: THEME.text, fontWeight: "900", fontSize: 16 },
+  blockLead: { color: THEME.text2, fontSize: 13 },
 
-  /* Stats */
-  statsInner: { marginTop: 14, width: "100%", flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
+  statsInner: { flexDirection: "row", flexWrap: "wrap", marginTop: 12 },
   statCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: THEME.border2,
     backgroundColor: THEME.card2,
-    borderRadius: 18,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    marginBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
+    margin: 6,
   },
-  statIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: THEME.border2,
-    backgroundColor: THEME.pill,
-  },
-  statK: { color: THEME.text3, fontWeight: "900", fontSize: 11, letterSpacing: 1.2, textTransform: "uppercase" },
-  statV: { marginTop: 4, color: THEME.text, fontWeight: "900", fontSize: 16 },
+  statIcon: { width: 40, height: 40, borderRadius: 10, alignItems: "center", justifyContent: "center", marginRight: 8 },
+  statK: { color: THEME.text2, fontWeight: "900", fontSize: 13 },
+  statV: { color: THEME.text, fontWeight: "900", fontSize: 14 },
 
-  /* Feature list */
-  featureList: { marginTop: 16 },
-  featureItem: { flexDirection: "row", alignItems: "flex-start", marginBottom: 10 },
-  featureDot: { width: 8, height: 8, borderRadius: 99, marginTop: 7, marginRight: 10, backgroundColor: "rgba(229,231,235,0.35)" },
-  featureText: { flex: 1, fontSize: 14.5, lineHeight: 22, color: THEME.text2 },
+  featureList: { flexDirection: "row", flexWrap: "wrap", marginTop: 12 },
+  featureItem: { width: "50%", flexDirection: "row", alignItems: "flex-start", paddingVertical: 6 },
+  featureDot: { width: 8, height: 8, borderRadius: 8, backgroundColor: THEME.text, marginTop: 6, marginRight: 8 },
+  featureText: { color: THEME.text2, fontSize: 14, lineHeight: 20 },
 
-  paragraph: { fontSize: 15, lineHeight: 28, color: THEME.text2, marginBottom: 12 },
-  paragraphLast: { fontSize: 15, lineHeight: 28, color: THEME.text2 },
+  paragraph: { color: THEME.text2, marginTop: 10, fontSize: 14, lineHeight: 22 },
+  paragraphLast: { color: THEME.text2, marginTop: 10, fontSize: 14, lineHeight: 22, marginBottom: 4 },
 
-  /* Location */
-  locationBody: { marginTop: 14, flexDirection: "row", flexWrap: "wrap" },
-  locationLeft: { flex: 1, minWidth: 260, marginRight: 14 },
+  locationBody: { flexDirection: "row", gap: 12, alignItems: "flex-start" as any },
+  locationLeft: { flex: 1, marginRight: 12 },
+  addrRow: { marginBottom: 12 },
+  addrK: { color: THEME.text2, fontWeight: "900", marginBottom: 4 },
+  addrV: { color: THEME.text2 },
+  btnRow: { flexDirection: "row", marginTop: 8 },
+  mapBtn: { flexDirection: "row", alignItems: "center", gap: 8, borderWidth: 1, borderColor: THEME.text, backgroundColor: THEME.text, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 14, marginRight: 10 },
+  mapBtnText: { color: THEME.bg, fontWeight: "900", marginLeft: 8 },
+  mapPreview: { position: "relative", flex: 1, minWidth: 260, height: 220, borderRadius: 18, borderWidth: 1, borderColor: THEME.border2, backgroundColor: "rgba(255,255,255,0.02)", overflow: "hidden", justifyContent: "flex-end" },
+  mapHintBar: { flexDirection: "row", alignItems: "center", paddingHorizontal: 12, paddingVertical: 10, backgroundColor: "rgba(11,15,20,0.72)", borderTopWidth: 1, borderTopColor: THEME.border2 },
+  mapHintText: { color: THEME.text2, fontWeight: "900", marginLeft: 8 },
 
-  addrRow: { marginBottom: 10 },
-  addrK: { fontSize: 12, fontWeight: "900", color: THEME.text3, letterSpacing: 1.1 },
-  addrV: { marginTop: 6, color: THEME.text2, lineHeight: 22, maxWidth: 520 },
-
-  btnRow: { marginTop: 10, flexDirection: "row", flexWrap: "wrap" },
-  mapBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderWidth: 1,
-    borderColor: THEME.text,
-    backgroundColor: THEME.text,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 14,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-  mapBtnText: { color: THEME.bg, fontWeight: "900", letterSpacing: 0.2 },
-
-  mapPreview: {
-    position: "relative",
-    flex: 1,
-    minWidth: 260,
-    height: 220,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: THEME.border2,
-    backgroundColor: "rgba(255,255,255,0.02)",
-    overflow: "hidden",
-    justifyContent: "flex-end",
-    ...(Platform.OS === "web"
-      ? { boxShadow: "0px 10px 22px rgba(0,0,0,0.35)" }
-      : {
-          shadowColor: "#000",
-          shadowOpacity: 0.20,
-          shadowRadius: 18,
-          shadowOffset: { width: 0, height: 10 },
-          elevation: 6,
-        }),
-  },
-
-  mapHintBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: "rgba(11,15,20,0.72)",
-    borderTopWidth: 1,
-    borderTopColor: THEME.border2,
-  },
-  mapHintText: { color: THEME.text2, fontWeight: "900" },
-
-  /* Modal */
   modal: { flex: 1, backgroundColor: THEME.bg },
-  modalTop: {
-    paddingHorizontal: 14,
-    paddingTop: 10,
-    paddingBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  closeBtn: {
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.18)",
-    backgroundColor: "rgba(255,255,255,0.06)",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 999,
-  },
-  closeText: { color: "rgba(255,255,255,0.90)", fontWeight: "900" },
+  modalTop: { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  closeBtn: { borderWidth: 1, borderColor: "rgba(255,255,255,0.18)", backgroundColor: "transparent", paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
+  closeText: { color: THEME.text, fontWeight: "900" },
+  counterPill: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: 999, backgroundColor: THEME.card2, borderWidth: 1, borderColor: THEME.border2 },
+  counterText: { color: THEME.text, fontWeight: "900" },
 
-  counterPill: {
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.18)",
-    backgroundColor: "rgba(255,255,255,0.06)",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 999,
-  },
-  counterText: { color: "rgba(255,255,255,0.90)", fontWeight: "900", letterSpacing: 0.4 },
-
-  modalBottom: { position: "absolute", left: 0, right: 0, bottom: 14, alignItems: "center" },
-  dotsPill: {
-    flexDirection: "row",
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.14)",
-    backgroundColor: "rgba(255,255,255,0.06)",
-  },
-  dot: { width: 8, height: 8, borderRadius: 99, backgroundColor: "rgba(255,255,255,0.25)", marginRight: 8 },
-  dotActive: { backgroundColor: "white", width: 20 },
+  modalBottom: { position: "absolute", left: 0, right: 0, bottom: 24, alignItems: "center" },
+  dotsPill: { flexDirection: "row", gap: 8 },
+  dot: { width: 8, height: 8, borderRadius: 8, backgroundColor: "rgba(255,255,255,0.18)", marginHorizontal: 4 },
+  dotActive: { backgroundColor: THEME.text },
 });

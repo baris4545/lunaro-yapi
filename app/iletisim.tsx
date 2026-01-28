@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Linking,
   NativeScrollEvent,
@@ -45,12 +45,20 @@ export default function Iletisim() {
   const { width } = useWindowDimensions();
   const isWide = width >= 980;
   const isTablet = width >= 720;
+  const isVeryWide = width >= 1600;
 
   const padX = isWide ? 48 : 16;
-  const maxW = 1120;
+  const maxW = isVeryWide ? 1600 : 1120;
 
-  // Mobile-first grid: 1 col, tablet/desktop: 2 col
-  const cardBasis = isTablet ? "48%" : "100%";
+  // ✅ 2 kolon (tablet+), mobil 1 kolon, ekstra geniş ekranlarda 3 kolon
+  const cardBasis = isVeryWide ? "33%" : isTablet ? "50%" : "100%";
+
+  const responsiveStyles = useMemo(() => {
+    return {
+      h1: { fontSize: isVeryWide ? 56 : isWide ? 44 : isTablet ? 36 : 28 },
+      lead: { maxWidth: isVeryWide ? 1100 : isWide ? 860 : isTablet ? 560 : 360 },
+    } as const;
+  }, [isWide, isTablet, isVeryWide]);
 
   const [elevated, setElevated] = useState(false);
 
@@ -81,15 +89,14 @@ export default function Iletisim() {
               </View>
             </View>
 
-            <Text style={styles.h1}>Bize Ulaşın</Text>
-            <Text style={styles.lead}>
-              Projelerimiz hakkında bilgi almak için arayabilir, WhatsApp’tan yazabilir veya e-posta gönderebilirsiniz.
+            <Text style={[styles.h1, responsiveStyles.h1]}>Bize Ulaşın</Text>
+            <Text style={[styles.lead, responsiveStyles.lead]}>
+              Projelerimiz hakkında bilgi almak için arayabilir, WhatsApp’tan yazabilir veya e-posta
+              gönderebilirsiniz.
             </Text>
 
             <View style={styles.heroDivider} />
-            <Text style={styles.heroNote}>
-              Tek dokunuşla işlem yapabilirsiniz: Ara • WhatsApp • Mail
-            </Text>
+            <Text style={styles.heroNote}>Tek dokunuşla işlem yapabilirsiniz: Ara • WhatsApp • Mail</Text>
           </View>
         </View>
       </View>
@@ -106,96 +113,106 @@ export default function Iletisim() {
             <Text style={styles.sectionTitle}>Telefon & E-posta</Text>
           </View>
 
+          {/* ✅ GAP YERİNE MARGIN GRID (Android-safe) */}
           <View style={styles.grid}>
             {/* PHONE 1 */}
-            <View style={[styles.card, { flexBasis: cardBasis }]}>
-              <View pointerEvents="none" style={styles.cardGlow} />
-              <View style={styles.cardHead}>
-                <View style={styles.iconWrap}>
-                  <Ionicons name="call-outline" size={18} color="rgba(229,231,235,0.90)" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.cardK}>Telefon</Text>
-                  <Text style={styles.cardV}>{formatPhoneTR(PHONE_1)}</Text>
-                </View>
-              </View>
+            <View style={[styles.cardWrap, { flexBasis: cardBasis }]}>
+              <View style={styles.card}>
+                <View pointerEvents="none" style={styles.cardGlow} />
 
-              <View style={styles.actionsCol}>
-                <Pressable onPress={() => openTel(PHONE_1)} style={styles.primaryBtn}>
-                  <Ionicons name="call-outline" size={18} color="#0b0f14" />
-                  <Text style={styles.primaryText}>Ara</Text>
-                </Pressable>
+                <View style={styles.cardHead}>
+                  <View style={styles.iconWrap}>
+                    <Ionicons name="call-outline" size={18} color="rgba(229,231,235,0.90)" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.cardK}>Telefon</Text>
+                    <Text style={styles.cardV}>{formatPhoneTR(PHONE_1)}</Text>
+                  </View>
+                </View>
 
-                <Pressable onPress={() => openWhatsapp(PHONE_1)} style={styles.ghostBtn}>
-                  <Ionicons name="logo-whatsapp" size={18} color="rgba(229,231,235,0.88)" />
-                  <Text style={styles.ghostText}>WhatsApp</Text>
-                </Pressable>
+                <View style={styles.actionsCol}>
+                  <Pressable onPress={() => openTel(PHONE_1)} style={styles.primaryBtn}>
+                    <Ionicons name="call-outline" size={18} color="#0b0f14" />
+                    <Text style={styles.primaryText}>Ara</Text>
+                  </Pressable>
+
+                  <Pressable onPress={() => openWhatsapp(PHONE_1)} style={[styles.ghostBtn, styles.mt10]}>
+                    <Ionicons name="logo-whatsapp" size={18} color="rgba(229,231,235,0.88)" />
+                    <Text style={styles.ghostText}>WhatsApp</Text>
+                  </Pressable>
+                </View>
               </View>
             </View>
 
             {/* PHONE 2 */}
-            <View style={[styles.card, { flexBasis: cardBasis }]}>
-              <View pointerEvents="none" style={styles.cardGlow} />
-              <View style={styles.cardHead}>
-                <View style={styles.iconWrap}>
-                  <Ionicons name="call-outline" size={18} color="rgba(229,231,235,0.90)" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.cardK}>Telefon</Text>
-                  <Text style={styles.cardV}>{formatPhoneTR(PHONE_2)}</Text>
-                </View>
-              </View>
+            <View style={[styles.cardWrap, { flexBasis: cardBasis }]}>
+              <View style={styles.card}>
+                <View pointerEvents="none" style={styles.cardGlow} />
 
-              <View style={styles.actionsCol}>
-                <Pressable onPress={() => openTel(PHONE_2)} style={styles.primaryBtn}>
-                  <Ionicons name="call-outline" size={18} color="#0b0f14" />
-                  <Text style={styles.primaryText}>Ara</Text>
-                </Pressable>
+                <View style={styles.cardHead}>
+                  <View style={styles.iconWrap}>
+                    <Ionicons name="call-outline" size={18} color="rgba(229,231,235,0.90)" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.cardK}>Telefon</Text>
+                    <Text style={styles.cardV}>{formatPhoneTR(PHONE_2)}</Text>
+                  </View>
+                </View>
 
-                <Pressable onPress={() => openWhatsapp(PHONE_2)} style={styles.ghostBtn}>
-                  <Ionicons name="logo-whatsapp" size={18} color="rgba(229,231,235,0.88)" />
-                  <Text style={styles.ghostText}>WhatsApp</Text>
-                </Pressable>
+                <View style={styles.actionsCol}>
+                  <Pressable onPress={() => openTel(PHONE_2)} style={styles.primaryBtn}>
+                    <Ionicons name="call-outline" size={18} color="#0b0f14" />
+                    <Text style={styles.primaryText}>Ara</Text>
+                  </Pressable>
+
+                  <Pressable onPress={() => openWhatsapp(PHONE_2)} style={[styles.ghostBtn, styles.mt10]}>
+                    <Ionicons name="logo-whatsapp" size={18} color="rgba(229,231,235,0.88)" />
+                    <Text style={styles.ghostText}>WhatsApp</Text>
+                  </Pressable>
+                </View>
               </View>
             </View>
 
             {/* EMAIL */}
-            <View style={[styles.card, { flexBasis: cardBasis }]}>
-              <View pointerEvents="none" style={styles.cardGlow} />
-              <View style={styles.cardHead}>
-                <View style={styles.iconWrap}>
-                  <Ionicons name="mail-outline" size={18} color="rgba(229,231,235,0.90)" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.cardK}>E-posta</Text>
-                  <Text style={styles.cardV}>{EMAIL}</Text>
-                </View>
-              </View>
+            <View style={[styles.cardWrap, { flexBasis: cardBasis }]}>
+              <View style={styles.card}>
+                <View pointerEvents="none" style={styles.cardGlow} />
 
-              <View style={styles.actionsCol}>
-                <Pressable onPress={() => openMail(EMAIL)} style={styles.primaryBtn}>
-                  <Ionicons name="paper-plane-outline" size={18} color="#0b0f14" />
-                  <Text style={styles.primaryText}>Mail Gönder</Text>
-                </Pressable>
+                <View style={styles.cardHead}>
+                  <View style={styles.iconWrap}>
+                    <Ionicons name="mail-outline" size={18} color="rgba(229,231,235,0.90)" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.cardK}>E-posta</Text>
+                    <Text style={styles.cardV}>{EMAIL}</Text>
+                  </View>
+                </View>
 
-                {Platform.OS === "web" ? (
-                  <Pressable
-                    onPress={() =>
-                      Linking.openURL(
-                        `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}`
-                      )
-                    }
-                    style={styles.ghostBtn}
-                  >
-                    <Ionicons name="logo-google" size={18} color="rgba(229,231,235,0.88)" />
-                    <Text style={styles.ghostText}>Gmail Aç</Text>
+                <View style={styles.actionsCol}>
+                  <Pressable onPress={() => openMail(EMAIL)} style={styles.primaryBtn}>
+                    <Ionicons name="paper-plane-outline" size={18} color="#0b0f14" />
+                    <Text style={styles.primaryText}>Mail Gönder</Text>
                   </Pressable>
-                ) : (
-                  <Pressable onPress={() => Linking.openURL(`mailto:${EMAIL}`)} style={styles.ghostBtn}>
-                    <Ionicons name="mail-open-outline" size={18} color="rgba(229,231,235,0.88)" />
-                    <Text style={styles.ghostText}>Mail Uygulaması</Text>
-                  </Pressable>
-                )}
+
+                  {Platform.OS === "web" ? (
+                    <Pressable
+                      onPress={() =>
+                        Linking.openURL(
+                          `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}`
+                        )
+                      }
+                      style={[styles.ghostBtn, styles.mt10]}
+                    >
+                      <Ionicons name="logo-google" size={18} color="rgba(229,231,235,0.88)" />
+                      <Text style={styles.ghostText}>Gmail Aç</Text>
+                    </Pressable>
+                  ) : (
+                    <Pressable onPress={() => Linking.openURL(`mailto:${EMAIL}`)} style={[styles.ghostBtn, styles.mt10]}>
+                      <Ionicons name="mail-open-outline" size={18} color="rgba(229,231,235,0.88)" />
+                      <Text style={styles.ghostText}>Mail Uygulaması</Text>
+                    </Pressable>
+                  )}
+                </View>
               </View>
             </View>
           </View>
@@ -205,7 +222,7 @@ export default function Iletisim() {
             <Text style={styles.noteText}>Mesajlarınıza en kısa sürede dönüş sağlıyoruz.</Text>
           </View>
 
-          {/* Small footer */}
+          {/* Footer */}
           <View style={styles.footer}>
             <View style={styles.footerTop}>
               <View>
@@ -279,13 +296,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
     flexWrap: "wrap",
   },
   kickerPill: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.12)",
     backgroundColor: "rgba(255,255,255,0.06)",
@@ -293,22 +308,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 999,
   },
-  kickerDot: { width: 8, height: 8, borderRadius: 99, backgroundColor: "rgba(229,231,235,0.92)" },
+  kickerDot: { width: 8, height: 8, borderRadius: 99, backgroundColor: "rgba(229,231,235,0.92)", marginRight: 8 },
   kicker: { color: "rgba(229,231,235,0.78)", fontWeight: "900", letterSpacing: 2.2, fontSize: 11 },
-
-  heroBadges: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.06)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.10)",
-  },
-  badgeText: { color: "rgba(229,231,235,0.80)", fontWeight: "900", fontSize: 12 },
 
   h1: { marginTop: 16, fontSize: 34, lineHeight: 38, letterSpacing: -0.6, fontWeight: "900", color: "#e5e7eb" },
   lead: { marginTop: 10, color: "rgba(229,231,235,0.72)", fontSize: 15.5, lineHeight: 28, maxWidth: 860 },
@@ -322,24 +323,30 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
     borderRadius: 999,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.10)",
     backgroundColor: "rgba(255,255,255,0.05)",
+    paddingVertical: 8,
+    paddingHorizontal: 10,
   },
-  sectionChipText: { color: "rgba(229,231,235,0.70)", fontWeight: "900", letterSpacing: 2.0, fontSize: 11 },
+  sectionChipText: { marginLeft: 8, color: "rgba(229,231,235,0.70)", fontWeight: "900", letterSpacing: 2.0, fontSize: 11 },
   sectionTitle: { marginTop: 12, color: "#e5e7eb", fontWeight: "900", fontSize: 16, letterSpacing: 0.2 },
-  sectionSub: { marginTop: 6, color: "rgba(229,231,235,0.55)" },
 
-  /* Grid */
-  grid: { marginTop: 14, flexDirection: "row", flexWrap: "wrap", gap: 12 },
+  /* ✅ Android-safe grid (NO gap) */
+  grid: {
+    marginTop: 14,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: -6, // spacer
+  },
+  cardWrap: {
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+  },
 
   /* Card */
   card: {
-    width: "100%",
     borderRadius: 22,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.10)",
@@ -356,7 +363,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: "rgba(255,255,255,0.06)",
   },
-  cardHead: { flexDirection: "row", alignItems: "center", gap: 12 },
+  cardHead: { flexDirection: "row", alignItems: "center" },
   iconWrap: {
     width: 44,
     height: 44,
@@ -366,28 +373,29 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.06)",
     alignItems: "center",
     justifyContent: "center",
+    marginRight: 12,
   },
   cardK: { color: "rgba(229,231,235,0.55)", fontWeight: "900", letterSpacing: 1.2, fontSize: 11 },
   cardV: { marginTop: 6, color: "#e5e7eb", fontWeight: "900", fontSize: 16 },
 
-  /* Mobile-friendly actions: column */
-  actionsCol: { marginTop: 14, gap: 10 },
+  actionsCol: { marginTop: 14 },
+  mt10: { marginTop: 10 },
+
   primaryBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 14,
     backgroundColor: "#e5e7eb",
   },
-  primaryText: { color: "#0b0f14", fontWeight: "900" },
+  primaryText: { marginLeft: 8, color: "#0b0f14", fontWeight: "900" },
+
   ghostBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 14,
@@ -395,7 +403,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.12)",
     backgroundColor: "rgba(255,255,255,0.04)",
   },
-  ghostText: { color: "rgba(229,231,235,0.90)", fontWeight: "900" },
+  ghostText: { marginLeft: 8, color: "rgba(229,231,235,0.90)", fontWeight: "900" },
 
   noteCard: {
     marginTop: 12,
@@ -407,9 +415,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
   },
-  noteText: { color: "rgba(229,231,235,0.58)", lineHeight: 20 },
+  noteText: { marginLeft: 10, color: "rgba(229,231,235,0.58)", lineHeight: 20 },
 
   /* Footer */
   footer: {
@@ -419,14 +426,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.06)",
   },
-  footerTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 14, flexWrap: "wrap" },
+  footerTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" },
   footerBrand: { color: "#e5e7eb", fontWeight: "900", letterSpacing: 3.2, fontSize: 12 },
   footerSub: { marginTop: 2, color: "rgba(229,231,235,0.55)", fontWeight: "900", letterSpacing: 1.2, fontSize: 11 },
-
-  footerLinks: { flexDirection: "row", gap: 14 },
+  footerLinks: { flexDirection: "row" },
   footerLinkBtn: { paddingVertical: 8, paddingHorizontal: 8 },
   footerLink: { color: "rgba(229,231,235,0.72)", fontWeight: "900" },
-
   footerDivider: { marginTop: 12, height: 1, backgroundColor: "rgba(255,255,255,0.06)" },
   footerText: { marginTop: 10, color: "rgba(229,231,235,0.50)" },
 });
