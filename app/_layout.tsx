@@ -1,10 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useFonts } from "expo-font";
 import { setBackgroundColorAsync, setButtonStyleAsync } from "expo-navigation-bar";
-import { Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Platform, SafeAreaView, View } from "react-native";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   // ✅ React Query client (tek instance)
@@ -14,8 +17,8 @@ export default function RootLayout() {
         defaultOptions: {
           queries: {
             retry: 1,
-            staleTime: 60_000, // 1 dk
-            gcTime: 10 * 60_000, // 10 dk
+            staleTime: 60_000,
+            gcTime: 10 * 60_000,
             refetchOnReconnect: true,
           },
         },
@@ -23,18 +26,51 @@ export default function RootLayout() {
     []
   );
 
+  // ✅ ICON FIX: Ionicons font preload (web + android dahil)
+  const [fontsLoaded] = useFonts({
+    ...Ionicons.font,
+  });
+
   // ✅ Android navigation bar rengi
-  React.useEffect(() => {
-    try {
-      // ensure icon fonts are loaded (web & browser hosts)
-      // @ts-ignore
-      if (Ionicons && Ionicons.loadFont) Ionicons.loadFont();
-    } catch {}
+  useEffect(() => {
     if (Platform.OS === "android") {
       setBackgroundColorAsync("#0b0f14").catch(() => {});
       setButtonStyleAsync("light").catch(() => {});
     }
   }, []);
+
+  // Inject fonts.css and preload fonts on web so the browser uses our copied fonts under /fonts
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+    try {
+      if (!document.querySelector('link[data-lunaro-fonts]')) {
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = '/fonts.css';
+        css.setAttribute('data-lunaro-fonts', '1');
+        document.head.appendChild(css);
+      }
+      if (!document.querySelector('link[data-lunaro-preload-ion]')) {
+        const p = document.createElement('link');
+        p.rel = 'preload';
+        p.as = 'font';
+        p.type = 'font/ttf';
+        p.href = '/fonts/Ionicons.ttf';
+        p.crossOrigin = 'anonymous';
+        p.setAttribute('data-lunaro-preload-ion', '1');
+        document.head.appendChild(p);
+      }
+    } catch (e) {}
+  }, []);
+
+  // ✅ Splash hide only after fonts loaded
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) return null;
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -42,7 +78,7 @@ export default function RootLayout() {
 
       {/* ✅ Global premium background */}
       <View style={{ flex: 1, backgroundColor: "#0b0f14" }}>
-        {/* Hafif “glow” efekti (tasarımı güzelleştirir) */}
+        {/* Subtle glows */}
         <View
           pointerEvents="none"
           style={{
@@ -52,7 +88,7 @@ export default function RootLayout() {
             width: 420,
             height: 420,
             borderRadius: 420,
-            backgroundColor: "rgba(56,189,248,0.12)", // sky glow
+            backgroundColor: "rgba(56,189,248,0.10)",
           }}
         />
         <View
@@ -64,19 +100,16 @@ export default function RootLayout() {
             width: 520,
             height: 520,
             borderRadius: 520,
-            backgroundColor: "rgba(167,139,250,0.10)", // violet glow
+            backgroundColor: "rgba(167,139,250,0.09)",
           }}
         />
 
-        {/* ✅ Safe area + Stack */}
         <SafeAreaView style={{ flex: 1 }}>
           <Stack
             screenOptions={{
               headerShown: false,
               animation: Platform.OS === "web" ? "none" : "fade",
-              contentStyle: {
-                backgroundColor: "transparent", // arka planı View taşıyor
-              },
+              contentStyle: { backgroundColor: "transparent" },
             }}
           />
         </SafeAreaView>

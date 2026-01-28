@@ -1,0 +1,27 @@
+/* Auto-generated fonts stylesheet for runtime web font loading */
+
+@font-face {
+  font-family: 'Ionicons';
+  src: url('/fonts/Ionicons.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaterialIcons';
+  src: url('/fonts/MaterialIcons.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('/fonts/FontAwesome.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Add other families as needed (the copy-fonts script copies all ttf files into /fonts) */
