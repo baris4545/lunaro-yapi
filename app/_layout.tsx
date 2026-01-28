@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { setBackgroundColorAsync, setButtonStyleAsync } from "expo-navigation-bar";
 import { Stack } from "expo-router";
@@ -24,6 +25,11 @@ export default function RootLayout() {
 
   // ✅ Android navigation bar rengi
   React.useEffect(() => {
+    try {
+      // ensure icon fonts are loaded (web & browser hosts)
+      // @ts-ignore
+      if (Ionicons && Ionicons.loadFont) Ionicons.loadFont();
+    } catch {}
     if (Platform.OS === "android") {
       setBackgroundColorAsync("#0b0f14").catch(() => {});
       setButtonStyleAsync("light").catch(() => {});
