@@ -128,12 +128,10 @@ export default function Projeler() {
   const sliderHeight = Math.max(320, height - topBarHeight);
 
   // ✅ Konum (GÜNCELLENDİ)
-  const ADDRESS =
-    "Lunaro Evrenos, Evrenos Sk No:151, 45140 Yunusemre/Manisa";
+  const ADDRESS = "Lunaro Evrenos, Evrenos Sk No:151, 45140 Yunusemre/Manisa";
 
   // ✅ Maps link (address bazlı, stabil)
-  const MAP_URL =
-    "https://maps.google.com?q=" + encodeURIComponent(ADDRESS) + "&entry=gps";
+  const MAP_URL = "https://maps.google.com?q=" + encodeURIComponent(ADDRESS) + "&entry=gps";
 
   // columnWrapperStyle only when columns > 1
   const columnWrapperStyle = useMemo(() => {
@@ -314,7 +312,10 @@ export default function Projeler() {
                         key={x.k}
                         style={[
                           styles.statCard,
-                          { flexBasis: isWide ? "23%" : isTablet ? "31%" : "48%" },
+                          {
+                            flexBasis: isWide ? "23%" : isTablet ? "31%" : "48%", // ✅ mobil 2'li
+                            minWidth: isTablet ? 220 : 0,
+                          },
                         ]}
                       >
                         <View style={styles.statIcon}>
@@ -466,11 +467,7 @@ export default function Projeler() {
             style={{ flex: 1 }}
             renderItem={({ item }) => (
               <View style={{ width, height: sliderHeight }}>
-                <Image
-                  source={item.src}
-                  style={{ width: "100%", height: "100%" }}
-                  resizeMode="contain"
-                />
+                <Image source={item.src} style={{ width: "100%", height: "100%" }} resizeMode="contain" />
               </View>
             )}
             getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
@@ -532,7 +529,14 @@ function NativeMapPreview({ address }: { address: string }) {
       ]}
     >
       <AppIcon name="location" size={22} color="rgba(229,231,235,0.88)" />
-      <Text style={{ marginTop: 10, textAlign: "center", color: "rgba(229,231,235,0.72)", lineHeight: 20 }}>
+      <Text
+        style={{
+          marginTop: 10,
+          textAlign: "center",
+          color: "rgba(229,231,235,0.72)",
+          lineHeight: 20,
+        }}
+      >
         {address}
       </Text>
       <Text style={{ marginTop: 6, textAlign: "center", color: "rgba(229,231,235,0.45)", fontSize: 12 }}>
@@ -711,8 +715,13 @@ const styles = StyleSheet.create({
   blockTitle: { color: THEME.text, fontWeight: "900", fontSize: 16 },
   blockLead: { color: THEME.text2, fontSize: 13 },
 
-  /* Stats */
-  statsInner: { flexDirection: "row", flexWrap: "wrap", marginTop: 12 },
+  /* ✅ Stats (mobilde 2'li sabit) */
+  statsInner: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 12,
+    justifyContent: "space-between",
+  },
   statCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -721,9 +730,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: THEME.border2,
     backgroundColor: THEME.card2,
-    margin: 6,
+    marginVertical: 6,
+    flexGrow: 0,
   },
-  statIcon: { width: 40, height: 40, borderRadius: 10, alignItems: "center", justifyContent: "center", marginRight: 8 },
+  statIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+  },
   statK: { color: THEME.text2, fontWeight: "900", fontSize: 13 },
   statV: { color: THEME.text, fontWeight: "900", fontSize: 14 },
 
