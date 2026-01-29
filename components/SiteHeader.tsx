@@ -149,11 +149,14 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    position: "relative",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.08)",
-  },
+wrap: {
+  position: "relative",
+  zIndex: 1000,            // ✅ üstte kalsın
+  elevation: 1000,         // ✅ Android
+  borderBottomWidth: 1,
+  borderBottomColor: "rgba(255,255,255,0.08)",
+},
+
   wrapElevated: {},
 
   glass: {
