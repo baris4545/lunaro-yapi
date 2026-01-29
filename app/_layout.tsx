@@ -5,7 +5,6 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useMemo } from "react";
 import { Platform, SafeAreaView, View } from "react-native";
 
-// RootLayout içinde:
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -32,25 +31,39 @@ export default function RootLayout() {
       setButtonStyleAsync("light").catch(() => {});
     }
   }, []);
-useEffect(() => {
-  if (Platform.OS !== "web") return;
 
-  const content =
-    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
+  // ✅ WEB: Zoom/taşma stabilizasyonu (zoom kapatmadan)
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
 
-  // varsa güncelle
-  const existing = document.querySelector('meta[name="viewport"]');
-  if (existing) {
-    existing.setAttribute("content", content);
-    return;
-  }
+    try {
+      // Yatay taşmayı kapat (zoom sonrası sağa kayma/bozulmayı engeller)
+      document.documentElement.style.overflowX = "hidden";
+      document.body.style.overflowX = "hidden";
 
-  // yoksa ekle
-  const meta = document.createElement("meta");
-  meta.setAttribute("name", "viewport");
-  meta.setAttribute("content", content);
-  document.head.appendChild(meta);
-}, []);
+      const root = document.getElementById("root");
+      if (root) root.style.overflowX = "hidden";
+
+      // iOS Safari pinch sonrası text-resize/reflow azalt
+      // @ts-ignore
+      document.body.style.webkitTextSizeAdjust = "100%";
+
+      // Viewport: zoom serbest kalsın ama layout stabil olsun
+      const content = "width=device-width, initial-scale=1, viewport-fit=cover";
+
+      const existing = document.querySelector('meta[name="viewport"]');
+      if (existing) {
+        existing.setAttribute("content", content);
+        return;
+      }
+
+      const meta = document.createElement("meta");
+      meta.setAttribute("name", "viewport");
+      meta.setAttribute("content", content);
+      document.head.appendChild(meta);
+    } catch {}
+  }, []);
+
   // ✅ SplashScreen: app mount olunca kapat
   useEffect(() => {
     SplashScreen.hideAsync().catch(() => {});
