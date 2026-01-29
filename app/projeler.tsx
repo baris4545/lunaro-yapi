@@ -127,11 +127,13 @@ export default function Projeler() {
   const topBarHeight = 64;
   const sliderHeight = Math.max(320, height - topBarHeight);
 
-  // Konum
-  const ADDRESS = "Manisa / Yunusemre / Muradiye Mahallesi, Evrenos Sk. No: 44-50";
+  // ✅ Konum (GÜNCELLENDİ)
+  const ADDRESS =
+    "Lunaro Evrenos, Evrenos Sk No:151, 45140 Yunusemre/Manisa";
+
+  // ✅ Maps link (address bazlı, stabil)
   const MAP_URL =
-    "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(ADDRESS);
-  const COORD = { latitude: 38.6655, longitude: 27.2773 };
+    "https://maps.google.com?q=" + encodeURIComponent(ADDRESS) + "&entry=gps";
 
   // columnWrapperStyle only when columns > 1
   const columnWrapperStyle = useMemo(() => {
@@ -409,9 +411,9 @@ export default function Projeler() {
                       style={[styles.mapPreview, { height: responsiveStyles.mapPreviewHeight }]}
                     >
                       {Platform.OS === "web" ? (
-                        <WebGoogleMapEmbed COORD={COORD} />
+                        <WebGoogleMapEmbed address={ADDRESS} />
                       ) : (
-                        <NativeMap COORD={COORD} ADDRESS={ADDRESS} />
+                        <NativeMapPreview address={ADDRESS} />
                       )}
 
                       {Platform.OS === "web" ? (
@@ -464,7 +466,11 @@ export default function Projeler() {
             style={{ flex: 1 }}
             renderItem={({ item }) => (
               <View style={{ width, height: sliderHeight }}>
-                <Image source={item.src} style={{ width: "100%", height: "100%" }} resizeMode="contain" />
+                <Image
+                  source={item.src}
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="contain"
+                />
               </View>
             )}
             getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
@@ -490,10 +496,10 @@ export default function Projeler() {
   );
 }
 
-function WebGoogleMapEmbed({ COORD }: { COORD: { latitude: number; longitude: number } }) {
+function WebGoogleMapEmbed({ address }: { address: string }) {
   const src =
     `https://www.google.com/maps?` +
-    `q=${COORD.latitude},${COORD.longitude}` +
+    `q=${encodeURIComponent(address)}` +
     `&z=16&output=embed&hl=tr`;
 
   // @ts-ignore
@@ -517,54 +523,22 @@ function WebGoogleMapEmbed({ COORD }: { COORD: { latitude: number; longitude: nu
   );
 }
 
-function NativeMap({
-  COORD,
-  ADDRESS,
-}: {
-  COORD: { latitude: number; longitude: number };
-  ADDRESS: string;
-}) {
-  let Maps: any = null;
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    Maps = require("react-native-maps");
-  } catch (err) {
-    Maps = null;
-  }
-
-  if (!Maps) {
-    return (
-      <View
-        style={[
-          StyleSheet.absoluteFillObject,
-          { alignItems: "center", justifyContent: "center" },
-        ]}
-      >
-        <Text style={{ color: THEME.text2 }}>{ADDRESS}</Text>
-      </View>
-    );
-  }
-
-  const MapView = Maps.default ?? Maps;
-  const { Marker, PROVIDER_GOOGLE } = Maps;
-
+function NativeMapPreview({ address }: { address: string }) {
   return (
-    <MapView
-      style={StyleSheet.absoluteFillObject}
-      provider={Platform.OS === "android" ? PROVIDER_GOOGLE : undefined}
-      initialRegion={{
-        latitude: COORD.latitude,
-        longitude: COORD.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      }}
-      scrollEnabled={false}
-      zoomEnabled={false}
-      rotateEnabled={false}
-      pitchEnabled={false}
+    <View
+      style={[
+        StyleSheet.absoluteFillObject,
+        { alignItems: "center", justifyContent: "center", padding: 16 },
+      ]}
     >
-      <Marker coordinate={COORD} title="Lunaro Evrenos" description={ADDRESS} />
-    </MapView>
+      <AppIcon name="location" size={22} color="rgba(229,231,235,0.88)" />
+      <Text style={{ marginTop: 10, textAlign: "center", color: "rgba(229,231,235,0.72)", lineHeight: 20 }}>
+        {address}
+      </Text>
+      <Text style={{ marginTop: 6, textAlign: "center", color: "rgba(229,231,235,0.45)", fontSize: 12 }}>
+        Haritayı açmak için dokun
+      </Text>
+    </View>
   );
 }
 
@@ -762,7 +736,7 @@ const styles = StyleSheet.create({
   paragraph: { color: THEME.text2, marginTop: 10, fontSize: 14, lineHeight: 22 },
   paragraphLast: { color: THEME.text2, marginTop: 10, fontSize: 14, lineHeight: 22, marginBottom: 4 },
 
-  /* Location (Android-safe: no gap) */
+  /* Location */
   locationBody: { flexDirection: "row", flexWrap: "wrap" },
   locationLeft: { flex: 1, minWidth: 260, marginRight: 12, marginBottom: 12 },
 

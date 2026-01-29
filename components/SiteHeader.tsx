@@ -112,7 +112,7 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
             onPress={() => setMenuOpen((s) => !s)}
             style={[styles.menuBtn, menuOpen && styles.menuBtnActive]}
           >
-            <AppIcon name={menuOpen ? "x" : "menu"} size={22} color="#e5e7eb" />
+            <AppIcon name={menuOpen ? "x" : "Menu"} size={22} color="#e5e7eb" />
           </Pressable>
         )}
       </View>
