@@ -27,9 +27,9 @@ export function SiteHeader({ elevated = false }: { elevated?: boolean }) {
 
   const nav = useMemo<NavItem[]>(
     () => [
-      { href: "/", label: "Ana Sayfa", icon: "home" },
+      { href: "/", label: "Ana Sayfa", icon: "Home" },
       { href: "/projeler", label: "Projeler", icon: "images" },
-      { href: "/iletisim", label: "İletişim", icon: "phone" },
+      { href: "/iletisim", label: "İletişim", icon: "Phone" },
     ],
     []
   );

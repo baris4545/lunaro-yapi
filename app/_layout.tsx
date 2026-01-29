@@ -23,7 +23,6 @@ export default function RootLayout() {
     []
   );
 
-  // ✅ Android navigation bar rengi
   useEffect(() => {
     if (Platform.OS === "android") {
       setBackgroundColorAsync("#0b0f14").catch(() => {});
@@ -31,12 +30,12 @@ export default function RootLayout() {
     }
   }, []);
 
-  // ✅ WEB: Zoom açık kalsın, ama taşma + scroll bozulması olmasın
+  // ✅ WEB: Android sağa kayma + iOS zoom sonrası bozulma fix
   useEffect(() => {
     if (Platform.OS !== "web") return;
 
     try {
-      // 1) Viewport meta: zoom KAPATMIYORUZ (user-scalable yok)
+      // 1) Viewport meta (zoom serbest)
       const content = "width=device-width, initial-scale=1, viewport-fit=cover";
       const existing = document.querySelector('meta[name="viewport"]');
       if (existing) existing.setAttribute("content", content);
@@ -47,63 +46,93 @@ export default function RootLayout() {
         document.head.appendChild(meta);
       }
 
-      // 2) iOS Safari pinch sonrası font reflow azalt
-      // @ts-ignore
-      document.documentElement.style.webkitTextSizeAdjust = "100%";
-      // @ts-ignore
-      document.body.style.webkitTextSizeAdjust = "100%";
-
-      // 3) Root yüksekliği & taşma stabilizasyonu (sticky bozmasın diye overflow vermiyoruz)
-      //    Bunun yerine "max-width:100vw" + media elemanları kısıt + root min-height fix
+      // 2) CSS fixes (overflow-x: clip = sticky bozma ihtimali hidden’dan daha düşük)
       if (!document.getElementById("lunaro-web-fixes")) {
         const style = document.createElement("style");
         style.id = "lunaro-web-fixes";
         style.innerHTML = `
+          :root {
+            --vvw: 100vw;
+            --vvh: 100vh;
+          }
+
           html, body {
             width: 100%;
             margin: 0;
             padding: 0;
             background: #0b0f14;
-            text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
+
+            /* YATAY TAŞMA KES */
+            overflow-x: clip;
           }
 
-          /* Expo web root */
+          /* iOS font reflow azalt */
+          html { -webkit-text-size-adjust: 100%; }
+          body { -webkit-text-size-adjust: 100%; }
+
+          /* Expo root */
           #root {
             width: 100%;
             max-width: 100vw;
-            min-height: 100vh;
             background: #0b0f14;
+
+            /* iOS zoom/addressbar sonrası yükseklik bozulmasını azalt */
+            min-height: var(--vvh);
           }
 
-          /* Address bar değişiminde scroll/height bozulmasını azaltır */
-          @supports (height: 100dvh) {
-            #root { min-height: 100dvh; }
-          }
-          @supports (height: 100svh) {
-            #root { min-height: 100svh; }
-          }
-          @supports (-webkit-touch-callout: none) {
-            #root { min-height: -webkit-fill-available; }
-          }
-
-          /* Zoom sonrası yatay taşmanın %80 sebebi: genişleyen medya */
-          img, video, canvas, svg {
+          /* Taşma yapan medya elemanlarını kıs */
+          img, video, canvas, svg, iframe {
             max-width: 100%;
             height: auto;
           }
 
-          /* İstemeden genişleyen elemanlar */
+          /* Bazı iframe’ler width taşırır */
+          iframe { display: block; }
+
+          /* Kutu modeli */
           * { box-sizing: border-box; }
         `;
         document.head.appendChild(style);
       }
+
+      // 3) VisualViewport: iOS pinch-zoom + address bar değişiminde gerçek ölçüyü yakala
+      const setVV = () => {
+        const vv = (window as any).visualViewport;
+        const w = vv?.width ?? window.innerWidth;
+        const h = vv?.height ?? window.innerHeight;
+        document.documentElement.style.setProperty("--vvw", `${w}px`);
+        document.documentElement.style.setProperty("--vvh", `${h}px`);
+
+        // ekstra güvenlik: root maxWidth sabit kalsın
+        const root = document.getElementById("root");
+        if (root) {
+          root.style.maxWidth = "100vw";
+        }
+      };
+
+      setVV();
+
+      const vv = (window as any).visualViewport;
+      if (vv?.addEventListener) {
+        vv.addEventListener("resize", setVV);
+        vv.addEventListener("scroll", setVV);
+      }
+      window.addEventListener("resize", setVV);
+      window.addEventListener("orientationchange", setVV);
+
+      return () => {
+        if (vv?.removeEventListener) {
+          vv.removeEventListener("resize", setVV);
+          vv.removeEventListener("scroll", setVV);
+        }
+        window.removeEventListener("resize", setVV);
+        window.removeEventListener("orientationchange", setVV);
+      };
     } catch {
       // sessiz geç
     }
   }, []);
 
-  // ✅ SplashScreen: app mount olunca kapat
   useEffect(() => {
     SplashScreen.hideAsync().catch(() => {});
   }, []);
@@ -111,9 +140,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <StatusBar style="light" translucent />
-
       <View style={{ flex: 1, backgroundColor: "#0b0f14" }}>
-        {/* Subtle glows */}
         <View
           pointerEvents="none"
           style={{
